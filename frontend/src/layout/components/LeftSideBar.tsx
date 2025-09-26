@@ -1,26 +1,44 @@
-import { BackpackIcon, BookOpenIcon, HomeIcon, SwordIcon, UserIcon } from "lucide-react"
-import { Link } from "react-router-dom"
+import { menuIcons } from "@/constants/icons"
+import { Link, useLocation } from "react-router-dom"
 
 const LeftSideBar = () => {
+
+    const location = useLocation()
+
     const menuItems = [
-        { name: "Home", href: "/", icon: <HomeIcon /> },
-        { name: "Characters", href: "/characters", icon: <UserIcon /> },
-        { name: "Weapons", href: "/weapons", icon: <SwordIcon /> },
-        { name: "Planner", href: "/planner", icon: <BookOpenIcon /> },
-        { name: "Inventory", href: "/inventory", icon: <BackpackIcon /> },
+        { name: "Characters", href: "/characters" },
+        { name: "Weapons", href: "/weapons" },
+        { name: "Planner", href: "/planner" },
+        { name: "Inventory", href: "/inventory" },
+        { name: "Settings", href: "/settings" }
     ]
 
     return (
-        <div className="bg-slate-800 h-full flex flex-col gap-2 p-2">
-            {menuItems.map((item) => (
-                <Link
-                    key={item.name}
-                    to={item.href}
-                    className="flex items-center gap-2 text-blue-300 p-2 rounded-lg hover:bg-purple-500">
-                    {item.icon}
-                    <span className="hidden md:inline">{item.name}</span>
+        <div className="bg-slate-800 h-full flex flex-col p-4">
+            <div className="mb-8 text-center">
+                <Link to="/" className="text-3xl font-bold block">
+                    Echoes
                 </Link>
-            ))}
+            </div>
+            <div className="flex flex-col gap-4">
+                {menuItems.map((item) => {
+                    const isActive = location.pathname === item.href
+                    return (
+                        <Link
+                            key={item.name}
+                            to={item.href}
+                            className={`mx-6 flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-gray-700 text-zinc-300 transition-colors duration-200
+                                ${isActive ? "bg-slate-900 text-white" : "hover:bg-gray-700/50 hover:text-zinc-300"}`}>
+                            <img
+                                src={menuIcons[item.name]}
+                                alt={item.name}
+                                className="w-10 h-10"
+                            />
+                            <span className="">{item.name}</span>
+                        </Link>
+                    )
+                })}
+            </div>
         </div>
     )
 }
