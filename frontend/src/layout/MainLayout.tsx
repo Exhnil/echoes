@@ -1,0 +1,24 @@
+
+import { Outlet } from "react-router-dom"
+import LeftSideBar from "./components/LeftSideBar"
+import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+
+const MainLayout = () => {
+    return (
+        <div className="flex h-screen bg-black text-white">
+            {/*Side bar*/}
+
+            <ResizablePanelGroup direction="horizontal" className="flex h-full overflow-hidden">
+                <ResizablePanel defaultSize={20} maxSize={20} minSize={20}>
+                    <LeftSideBar />
+                </ResizablePanel>
+                <ResizablePanel className="flex-1 p-6 bg-gray-900 overflow-auto">
+                    <Outlet />
+                </ResizablePanel>
+            </ResizablePanelGroup>
+
+        </div>
+    )
+}
+
+export default MainLayout
