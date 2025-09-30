@@ -1,0 +1,57 @@
+import { axiosInstance } from "@/lib/axios";
+import type { Item } from "@/types";
+import { create } from "zustand";
+
+interface ItemStore {
+  items: Item[];
+  itemsList: string[];
+  isLoading: boolean;
+  error: string | null;
+
+  fetchItemsList: () => Promise<void>;
+  fetchMaterial: () => Promise<void>;
+  fetchAllMaterials: () => Promise<void>;
+}
+
+export const useItemStore = create<ItemStore>((set) => ({
+  items: [],
+  itemsList: [],
+  isLoading: false,
+  error: null,
+
+  fetchItemsList: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get("/materials");
+      set({ itemsList: response.data });
+    } catch (error: unknown) {
+      let errorMessage = "An unknown error occurred";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  fetchMaterial: async () => {},
+  fetchAllMaterials: async () => {
+    set({ isLoading: true });
+    try {
+      const response = await axiosInstance.get("/materials/all");
+      set({ items: response.data });
+    } catch (error: unknown) {
+      let errorMessage = "An unknown error occurred";
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      set({ error: errorMessage });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));

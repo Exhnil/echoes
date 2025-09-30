@@ -14,9 +14,9 @@ export interface Character {
     inherent_skill_materials: InherentSkillMaterials
 }
 
-interface Material {
+export interface Material {
     name: string;
-    value: number
+    value: number;
 }
 
 interface AscensionMaterials {
@@ -33,4 +33,50 @@ interface StatsBonusMaterial {
 
 interface InherentSkillMaterials {
     [level: string]: Material[];
+}
+
+export interface CharacterState {
+    id: string;
+    level: CharacterLevelState
+    skills: Record<string, SkillState>
+    bonusStats: BonusStat[]
+    inherentSkills: InherentSkill[]
+}
+
+interface CharacterLevelState {
+    ascensionLevel: number;
+    currentCharacterLevel: number;
+    targetCharacterLevel: number;
+}
+
+export interface SkillState {
+    currentSkillLevel: number;
+    targetSkillLevel: number;
+}
+
+export type UnlockState = "none" | "planned" | "done";
+
+interface BonusStat {
+    id: string;
+    state: UnlockState;
+}
+
+interface InherentSkill {
+    id: string;
+    state: UnlockState;
+}
+
+export interface Item {
+    name: string,
+    id: string,
+    type: string,
+    rarity: number,
+    source: string
+}
+
+export interface ItemState {
+    id: string;
+    name: string;
+    owned: number;
+    required: number;
 }

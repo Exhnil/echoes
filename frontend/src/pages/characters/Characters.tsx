@@ -5,6 +5,7 @@ import { Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import CharactersGrid from './components/CharactersGrid'
 import { attributeIcons, elementColor, weaponIcons } from '@/constants/icons'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const Characters = () => {
   const { attributes, weaponsTypes, fetchWeaponsType, fetchAttributes, isLoading } = useMiscStore();
@@ -56,19 +57,26 @@ const Characters = () => {
                   key={attribute}
                   value={attribute}
                   className='relative px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
-
-                  <div
-                    className='absolute top w-5 h-5 rounded-full'
-                    style={{
-                      background: `radial-gradient(circle, ${elementColor[attribute]} 0%, transparent 70%)`,
-                      zIndex: 0
-                    }}
-                  />
-                  <img
-                    src={attributeIcons[attribute]}
-                    alt={attribute}
-                    title={attribute}
-                    className='w-5 h-5 relative z-10' />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <div
+                          className='absolute top w-5 h-5 rounded-full'
+                          style={{
+                            background: `radial-gradient(circle, ${elementColor[attribute]} 0%, transparent 70%)`,
+                            zIndex: 0
+                          }}
+                        />
+                        <img
+                          src={attributeIcons[attribute]}
+                          alt={attribute}
+                          className='w-5 h-5 relative z-10' />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{attribute}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>
@@ -83,11 +91,17 @@ const Characters = () => {
                   key={weapon}
                   value={weapon}
                   className='px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
-                  <img
-                    src={weaponIcons[weapon]}
-                    alt={weapon}
-                    title={weapon}
-                    className='w-5 h-5' />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <img
+                        src={weaponIcons[weapon]}
+                        alt={weapon}
+                        className='w-5 h-5' />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{weapon}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </ToggleGroupItem>
               ))}
             </ToggleGroup>

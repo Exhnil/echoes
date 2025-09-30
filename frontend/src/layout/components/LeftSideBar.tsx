@@ -14,7 +14,7 @@ const LeftSideBar = () => {
     ]
 
     return (
-        <div className="bg-slate-800 h-full flex flex-col p-4">
+        <div className="bg-slate-800 h-screen flex flex-col p-4">
             <div className="mb-8 text-center">
                 <Link to="/" className="text-3xl font-bold block">
                     Echoes

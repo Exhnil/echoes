@@ -13,7 +13,6 @@ interface CharactersGridProps {
 
 const getCharacterIcon = (name: string) => {
     const url = `${axiosInstance.defaults.baseURL}/characters/${name}/icon.png`
-    console.log(url)
     return url;
 }
 
