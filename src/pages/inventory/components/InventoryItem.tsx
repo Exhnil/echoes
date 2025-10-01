@@ -10,8 +10,8 @@ interface InventoryItemProps {
 }
 
 const rarityColors: Record<number, string> = {
-    2: "from-blue-400",
-    3: "from-green-400",
+    2: "from-green-400",
+    3: "from-blue-400",
     4: "from-purple-600",
     5: "from-yellow-400",
 }
