@@ -1,53 +1,32 @@
 import type { Character, CharacterState, Material } from "@/types";
 
-const totalMats: Record<string, Material> = {};
-
-const addMats = (materials: Material[]) => {
-  for (const material of materials) {
-    const exist = totalMats[material.name];
-    if (exist) {
-      exist.value += material.value;
-    } else {
-      totalMats[material.name] = { ...material };
-    }
-  }
-};
-
 export const calculate = (
   characters: Character[],
   charactersState: Record<string, CharacterState>
 ) => {
-  const charaMap = Object.fromEntries(characters.map((c) => [c.id, c]));
+  const totalMats: Record<string, Material> = {};
 
-  for (const [characterId, state] of Object.entries(charactersState)) {
-    const character = charaMap[characterId];
-    if (!character) continue;
-
-    const { currentCharacterLevel, targetCharacterLevel } = state.level;
+  Object.entries(charactersState).forEach(([characterId, state]) => {
+    const character = characters.find((c) => c.id === characterId);
+    if (!character) return;
+    const currentCharaLevel = state.level.currentCharacterLevel;
+    const targetCharacterLevel = state.level.targetCharacterLevel;
 
     for (const [levelString, materials] of Object.entries(
       character.ascension_materials
     )) {
-      const level = +levelString;
-      if (level >= currentCharacterLevel && level <= targetCharacterLevel) {
-        addMats(materials);
-      }
-    }
-
-    for (const [levelStr, materials] of Object.entries(
-      character.skill_materials
-    )) {
-      const level = +levelStr;
-      for (const { currentSkillLevel, targetSkillLevel } of Object.values(
-        state.skills
-      )) {
-        if (level >= currentSkillLevel && level <= targetSkillLevel) {
-          addMats(materials);
+      const level = parseInt(levelString, 10);
+      if (level >= currentCharaLevel && level <= targetCharacterLevel) {
+        for (const material of materials) {
+          if (totalMats[material.name]) {
+            totalMats[material.name].value += material.value;
+          } else {
+            totalMats[material.name] = { ...material };
+          }
         }
       }
     }
-  }
-
+  });
   //console.log(totalMats);
   return totalMats;
 };
