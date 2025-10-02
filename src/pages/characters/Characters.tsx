@@ -2,17 +2,19 @@ import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useMiscStore } from '@/store/MiscStore'
 import { Star } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import CharactersGrid from './components/CharactersGrid'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { attributeIcons, elementColor, weaponIcons } from '@/constants/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import CharacterGridSkeleton from './skeletons/CharacterGridSkeleton'
+
+const CharactersGrid = lazy(() => import("./components/CharactersGrid"))
 
 const Characters = () => {
   const { attributes, weaponsTypes, fetchWeaponsType, fetchAttributes, isLoading } = useMiscStore();
 
-  const [selectedRarity, setSelectedRarity] = useState<string | null>(null)
-  const [selectedAttribute, setSelectedAttribute] = useState<string | null>(null)
-  const [selectedWeapon, setSelectedWeapon] = useState<string | null>(null)
+  const [selectedRarity, setSelectedRarity] = useState<string>("")
+  const [selectedAttribute, setSelectedAttribute] = useState<string>("")
+  const [selectedWeapon, setSelectedWeapon] = useState<string>("")
 
   useEffect(() => {
     fetchAttributes();
@@ -37,7 +39,7 @@ const Characters = () => {
             <ToggleGroup
               type='single'
               className='flex bg-gray-800'
-              value={selectedRarity ?? ''}
+              value={selectedRarity}
               onValueChange={setSelectedRarity}>
               <ToggleGroupItem value='4' className='px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
                 <Star className='text-purple-600' />
@@ -50,7 +52,7 @@ const Characters = () => {
             <ToggleGroup
               type='single'
               className='flex bg-gray-800'
-              value={selectedAttribute ?? ''}
+              value={selectedAttribute}
               onValueChange={setSelectedAttribute}>
               {attributes.map((attribute) => (
                 <ToggleGroupItem
@@ -84,7 +86,7 @@ const Characters = () => {
             <ToggleGroup
               type='single'
               className="flex bg-gray-800"
-              value={selectedWeapon ?? ''}
+              value={selectedWeapon}
               onValueChange={setSelectedWeapon}>
               {weaponsTypes.map((weapon) => (
                 <ToggleGroupItem
@@ -109,11 +111,13 @@ const Characters = () => {
         )}
 
       </div>
-
-      <CharactersGrid
-        rarity={selectedRarity}
-        attribute={selectedAttribute}
-        weapon={selectedWeapon} />
+      <Suspense fallback={
+        <CharacterGridSkeleton />}>
+        <CharactersGrid
+          rarity={selectedRarity}
+          attribute={selectedAttribute}
+          weapon={selectedWeapon} />
+      </Suspense>
     </div>
   )
 }

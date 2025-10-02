@@ -5,28 +5,50 @@ export const calculate = (
   charactersState: Record<string, CharacterState>
 ) => {
   const totalMats: Record<string, Material> = {};
+  const addMats = (materials: Material[]) => {
+    for (const { name, value } of materials) {
+      totalMats[name] ??= { name, value: 0 };
+      totalMats[name].value += value;
+    }
+  };
 
-  Object.entries(charactersState).forEach(([characterId, state]) => {
-    const character = characters.find((c) => c.id === characterId);
-    if (!character) return;
-    const currentCharaLevel = state.level.currentCharacterLevel;
-    const targetCharacterLevel = state.level.targetCharacterLevel;
+  const charaMap = Object.fromEntries(characters.map((c) => [c.id, c]));
 
+  for (const [characterId, state] of Object.entries(charactersState)) {
+    const character = charaMap[characterId];
+    if (!character) continue;
+
+    const { currentCharacterLevel, targetCharacterLevel } = state.level;
+
+    // ascension
     for (const [levelString, materials] of Object.entries(
       character.ascension_materials
     )) {
-      const level = parseInt(levelString, 10);
-      if (level >= currentCharaLevel && level <= targetCharacterLevel) {
-        for (const material of materials) {
-          if (totalMats[material.name]) {
-            totalMats[material.name].value += material.value;
-          } else {
-            totalMats[material.name] = { ...material };
-          }
-        }
+      const level = Number(levelString);
+      if (level > currentCharacterLevel && level <= targetCharacterLevel) {
+        addMats(materials);
       }
     }
-  });
-  //console.log(totalMats);
+
+    // skills
+    for (const [levelString, materials] of Object.entries(
+      character.skill_materials
+    )) {
+      const level = Number(levelString);
+      const skillStepNumber = Object.values(state.skills).filter(
+        (skill) =>
+          level > skill.currentSkillLevel && level <= skill.targetSkillLevel
+      ).length;
+
+      if (skillStepNumber > 0) {
+        addMats(
+          materials.map((material) => ({
+            name: material.name,
+            value: material.value * skillStepNumber,
+          }))
+        );
+      }
+    }
+  }
   return totalMats;
 };
