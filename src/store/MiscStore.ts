@@ -26,7 +26,6 @@ export const useMiscStore = create<MiscStore>((set) => ({
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get("/misc/misc");
-      console.log(response.data.nations);
       set({ attributes: response.data.nations });
     } catch (error: any) {
       set({ error: error.response.data.message });

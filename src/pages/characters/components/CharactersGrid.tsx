@@ -42,6 +42,7 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
                     {filteredCharacters.map((character) =>
                     (
                         <CharacterCard
+                            key={character.id}
                             setSelectedCharacter={(character) => setSelectedCharacter(character)}
                             attributeIcon={attributeIcons[character.attribute]}
                             characterIcon={getCharacterIcon(character.name)}

@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useMiscStore } from '@/store/MiscStore'
 import { Star } from 'lucide-react'
@@ -25,9 +24,6 @@ const Characters = () => {
     <div className='p-6'>
       <div className='items-center mb-4'>
         <h1 className='text-2xl font-bold mb-2'>Characters</h1>
-        <div className='mb-6 flex'>
-          <Button className='bg-gray-600 hover:bg-gray-500 text-white'>Add</Button>
-        </div>
       </div>
 
       <div className='mb-6'>
