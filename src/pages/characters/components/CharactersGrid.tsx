@@ -23,7 +23,7 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
     }, [fetchCharacters])
 
     const getCharacterIcon = useCallback((name: string) => {
-        const url = `${axiosInstance.defaults.baseURL}/characters/${name}/icon.png`
+        const url = `${axiosInstance.defaults.baseURL}/characters/${name.toLowerCase()}/icon.png`
         return url;
     }, [])
 
