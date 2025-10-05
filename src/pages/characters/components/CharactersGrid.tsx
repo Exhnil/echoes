@@ -22,8 +22,8 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
         fetchCharacters()
     }, [fetchCharacters])
 
-    const getCharacterIcon = useCallback((name: string) => {
-        const url = `${axiosInstance.defaults.baseURL}/characters/${name.toLowerCase()}/icon.png`
+    const getCharacterIcon = useCallback((id: string) => {
+        const url = `${axiosInstance.defaults.baseURL}/characters/${id.toLowerCase()}/icon.png`
         return url;
     }, [])
 
@@ -45,7 +45,7 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
                             key={character.id}
                             setSelectedCharacter={(character) => setSelectedCharacter(character)}
                             attributeIcon={attributeIcons[character.attribute]}
-                            characterIcon={getCharacterIcon(character.name)}
+                            characterIcon={getCharacterIcon(character.id)}
                             character={character} />
                     ))}
                 </div>

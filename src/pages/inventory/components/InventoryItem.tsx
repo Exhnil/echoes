@@ -17,7 +17,7 @@ const rarityColors: Record<number, string> = {
 }
 
 const getMaterialIcon = (id: string) => {
-    return `${axiosInstance.defaults.baseURL}/materials/item_${id.toLowerCase()}/item_${id.toLowerCase()}.png`
+    return `${axiosInstance.defaults.baseURL}/materials/${id.toLowerCase()}/${id.toLowerCase()}.png`
 }
 
 const getRarityColor = (rarity: number) => {

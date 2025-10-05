@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "inventoryState";
-const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/item_shell_credit.png`
+const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
 
 const Inventory = () => {
   const { items, fetchAllMaterials } = useItemStore();
