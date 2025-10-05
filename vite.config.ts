@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   build:{
-    outDir:path.resolve(__dirname, "../../api/wuwa-api/public")
+    outDir:path.resolve("dist")
   },
   server: {
     port: 3000,
