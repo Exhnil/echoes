@@ -7,6 +7,7 @@ import { useCharactersStore } from "@/store/CharactersStore";
 import { axiosInstance } from "@/lib/axios";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { materialsGroups, typeOrder } from "@/lib/constants";
 
 const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
@@ -61,6 +62,28 @@ const Inventory = () => {
       prev.map((item) =>
         item.id === id ? { ...item, owned: value } : item)
     )
+  }
+
+  const variantMap = new Map<string, string>()
+  materialsGroups.forEach(group => {
+    group.variants.forEach(v => variantMap.set(v, group.base))
+  })
+
+
+  const sortItems = (a: Item, b: Item) => {
+    const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type)
+    if (typeDiff !== 0) return typeDiff
+
+    const aBase = variantMap.get(a.name) ?? a.name
+    const bBase = variantMap.get(b.name) ?? b.name
+
+    const baseDiff = aBase.localeCompare(bBase)
+    if (baseDiff !== 0) return baseDiff
+
+    const rarity = b.rarity - a.rarity
+    if (rarity !== 0) return rarity
+
+    return a.name.localeCompare(b.name)
   }
 
   useEffect(() => {
@@ -138,6 +161,7 @@ const Inventory = () => {
           {
             items
               .filter((item) => item.name !== "Shell Credit")
+              .sort(sortItems)
               .map((item) => {
                 const state = itemsState.find(s => s.id === item.id)
                 if (!state) return null

@@ -39,15 +39,17 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
         <>
             <div className='mt-6'>
                 <div className='grid grid-cols-8 gap-x-4 gap-y-8'>
-                    {filteredCharacters.map((character) =>
-                    (
-                        <CharacterCard
-                            key={character.id}
-                            setSelectedCharacter={(character) => setSelectedCharacter(character)}
-                            attributeIcon={attributeIcons[character.attribute]}
-                            characterIcon={getCharacterIcon(character.id)}
-                            character={character} />
-                    ))}
+                    {filteredCharacters
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((character) =>
+                        (
+                            <CharacterCard
+                                key={character.id}
+                                setSelectedCharacter={(character) => setSelectedCharacter(character)}
+                                attributeIcon={attributeIcons[character.attribute]}
+                                characterIcon={getCharacterIcon(character.id)}
+                                character={character} />
+                        ))}
                 </div>
             </div>
             <CharacterModal
