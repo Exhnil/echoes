@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { axiosInstance } from '@/lib/axios'
-import { updateCharacterLevel, updateSkillLevel } from '@/lib/characterState'
+import { updateCharacterLevel, updateSkillLevel } from '@/lib/statesUpdate'
 import { ranks, skillNames } from '@/lib/constants'
 import type { BonusStat, Character, CharacterState, InherentSkill, SkillState, UnlockState } from '@/types'
 import { Check, ChevronRight, Flag } from 'lucide-react'
@@ -50,7 +50,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         if (!parsed[character.id]) {
             parsed[character.id] = {
                 id: character.id,
-                level: { ascensionLevel: 1, currentCharacterLevel: 1, targetCharacterLevel: 1 },
+                level: { ascensionLevel: 1, currentAscensionLevel: 1, targetAscensionLevel: 1 },
                 skills: skillNames.reduce((acc, skill) => {
                     acc[skill] = { currentSkillLevel: 1, targetSkillLevel: 1 } as SkillState
                     return acc
@@ -63,7 +63,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         setCharacterState(parsed)
     }, [character])
 
-    const updateLevel = (currentOrTarget: "currentCharacterLevel" | "targetCharacterLevel", lvl: number) => {
+    const updateLevel = (currentOrTarget: "currentAscensionLevel" | "targetAscensionLevel", lvl: number) => {
         if (!character) return
 
         setCharacterState(prev => {
@@ -111,7 +111,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                 <DialogHeader className='flex flex-row items-center gap-4 p-4 bg-gradient-to-br from-gray-800 to-gray-700 border-b border-gray-700'>
                     <div className='w-16 h-16 rounded-full overflow-hidden bg-gray-600 justify-center'>
                         <img
-                            src={getCharacterIcon(character?.id)}
+                            src={getCharacterIcon(character.id)}
                             alt={character.name}
                             className='object-cover w-full h-full' />
                     </div>
@@ -143,13 +143,13 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
 
                             <div className='flex items-center justify-center space-x-4'>
                                 <LevelSelector
-                                    value={characterState[character.id]?.level.currentCharacterLevel}
-                                    onSelect={(lvl) => updateLevel("currentCharacterLevel", lvl)}
+                                    value={characterState[character.id]?.level.currentAscensionLevel}
+                                    onSelect={(lvl) => updateLevel("currentAscensionLevel", lvl)}
                                 />
                                 <ChevronRight className='h-6 w-6' />
                                 <LevelSelector
-                                    value={characterState[character.id]?.level.targetCharacterLevel}
-                                    onSelect={(lvl) => updateLevel("targetCharacterLevel", lvl)}
+                                    value={characterState[character.id]?.level.targetAscensionLevel}
+                                    onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)}
                                 />
                             </div>
                         </TabsContent>
@@ -236,11 +236,11 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 </div>
                             </div>
                         </TabsContent>
-                        <TabsContent value='weapon' className='space-y-4'>
+                        {/* <TabsContent value='weapon' className='space-y-4'>
                             <div className='bg-gray-800 text-center p-2 rounded-md font-medium'>
                                 Weapon
                             </div>
-                        </TabsContent>
+                        </TabsContent>*/}
                     </Tabs>
                 </div>
             </DialogContent>

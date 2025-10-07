@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import InventoryItem from "./components/InventoryItem";
 import { useItemStore } from "@/store/ItemStore";
-import type { ItemState, Item, CharacterState } from "@/types";
+import type { ItemState, Item, CharacterState, WeaponState } from "@/types";
 import { calculate } from "@/lib/calculateMaterials";
 import { useCharactersStore } from "@/store/CharactersStore";
 import { axiosInstance } from "@/lib/axios";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { materialsGroups, typeOrder } from "@/lib/constants";
+import { useWeaponStore } from "@/store/WeaponStore";
 
 const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
@@ -15,6 +16,7 @@ const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/she
 const Inventory = () => {
   const { items, fetchAllMaterials } = useItemStore();
   const { characters, fetchCharacters } = useCharactersStore()
+  const { weapons, fetchWeapons } = useWeaponStore()
 
   const [itemsState, setItemsState] = useState<ItemState[]>([]);
   const [requiredMaterials, setRequiredMaterials] = useState<Record<string, { value: number }>>({});
@@ -22,10 +24,10 @@ const Inventory = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchAllMaterials(), fetchCharacters])
+      await Promise.all([fetchAllMaterials(), fetchCharacters(), fetchWeapons()])
     }
     loadData()
-  }, [fetchAllMaterials, fetchCharacters])
+  }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
 
   useEffect(() => {
     if (items.length === 0) return
@@ -37,11 +39,14 @@ const Inventory = () => {
     const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
 
     const savedCharacters = localStorage.getItem("characterState")
-    const parsed: Record<string, CharacterState> = savedCharacters ? JSON.parse(savedCharacters) : {}
+    const parsedCharacters: Record<string, CharacterState> = savedCharacters ? JSON.parse(savedCharacters) : {}
+
+    const savedWeapons = localStorage.getItem("weaponState")
+    const parsedWeapons: Record<string, WeaponState> = savedWeapons ? JSON.parse(savedWeapons) : {}
 
     if (characters.length === 0) return
 
-    const result = calculate(characters, parsed)
+    const result = calculate(characters, weapons, parsedCharacters, parsedWeapons)
     setRequiredMaterials(result)
 
 
@@ -55,7 +60,7 @@ const Inventory = () => {
     });
 
     setItemsState(merged);
-  }, [characters, items]);
+  }, [characters, items, weapons]);
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) =>

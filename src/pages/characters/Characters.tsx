@@ -4,7 +4,7 @@ import { Star } from 'lucide-react'
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { attributeIcons, elementColor, weaponIcons } from '@/constants/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import CharacterGridSkeleton from './skeletons/CharacterGridSkeleton'
+import CharacterGridSkeleton from '../skeletons/CharacterGridSkeleton'
 
 const CharactersGrid = lazy(() => import("./components/CharactersGrid"))
 

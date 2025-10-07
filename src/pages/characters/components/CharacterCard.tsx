@@ -10,7 +10,6 @@ interface CharacterCardProps {
 const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCharacter }: CharacterCardProps) => {
     return (
         <div
-            key={character.id}
             className='flex flex-col items-center cursor-pointer'
             onClick={() => setSelectedCharacter(character)}>
             <div className='relative bg-gradient-to-b rounded-xl justify-between items-center from-gray-600 to-gray-800'>
