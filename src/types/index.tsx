@@ -10,7 +10,7 @@ export interface Character {
     release: string
     ascension_materials: AscensionMaterials
     skill_materials: SkillMaterials
-    stats_bonus_material: StatsBonusMaterial
+    stats_bonus_materials: StatsBonusMaterials
     inherent_skill_materials: InherentSkillMaterials
 }
 
@@ -27,7 +27,7 @@ interface SkillMaterials {
     [level: string]: Material[];
 }
 
-interface StatsBonusMaterial {
+interface StatsBonusMaterials {
     [level: string]: Material[];
 }
 
@@ -56,13 +56,16 @@ export interface SkillState {
 
 export type UnlockState = "none" | "planned" | "done";
 
-interface BonusStat {
+export interface BonusStat {
     id: string;
+    rank: number;
+    index: number;
     state: UnlockState;
 }
 
-interface InherentSkill {
+export interface InherentSkill {
     id: string;
+    rank: number;
     state: UnlockState;
 }
 

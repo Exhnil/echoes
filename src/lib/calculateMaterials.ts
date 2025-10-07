@@ -49,6 +49,19 @@ export const calculate = (
         );
       }
     }
+
+    for (const bonus of state.bonusStats ?? []) {
+      if (bonus.state !== "planned") continue;
+      const mats = character.stats_bonus_materials?.[`rank_${bonus.rank}`];
+      if (mats) addMats(mats);
+    }
+
+    for (const inherent of state.inherentSkills ?? []) {
+      if (inherent.state !== "planned") continue;
+      const mats =
+        character.inherent_skill_materials?.[`rank_${inherent.rank}`];
+      if (mats) addMats(mats);
+    }
   }
   return totalMats;
 };

@@ -38,3 +38,5 @@ export const updateSkillLevel = (
     },
   };
 };
+
+export const updateTalents = () => {};

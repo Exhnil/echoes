@@ -1,11 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ToggleGroupItem } from '@/components/ui/toggle-group'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { axiosInstance } from '@/lib/axios'
 import { updateCharacterLevel, updateSkillLevel } from '@/lib/characterState'
-import { ranks, skillNames, stats } from '@/lib/constants'
-import type { Character, CharacterState, SkillState, UnlockState } from '@/types'
-import { ToggleGroup } from '@radix-ui/react-toggle-group'
+import { ranks, skillNames } from '@/lib/constants'
+import type { BonusStat, Character, CharacterState, InherentSkill, SkillState, UnlockState } from '@/types'
 import { Check, ChevronRight, Flag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SkillLevelInput from './SkillLevelInput'
@@ -21,13 +20,22 @@ const getCharacterIcon = (id: string) => {
     return `${axiosInstance.defaults.baseURL}/characters/${id}/icon.png`
 }
 
-const bonusStats = ranks.flatMap(rank =>
-    stats.map(stat => ({
-        id: `R${rank}-${stat}`,
-        state: "none" as UnlockState
+const generateBonusStats = (): BonusStat[] =>
+    ranks.flatMap(rank =>
+        Array.from({ length: 4 }).map((_, i) => ({
+            id: `R${rank}-${i + 1}`,
+            rank,
+            index: i,
+            state: 'none' as UnlockState
+        }))
+    )
+
+const generateIhnerentSills = (): InherentSkill[] =>
+    ranks.map(rank => ({
+        id: `IS${rank}`,
+        rank,
+        state: 'none' as UnlockState
     }))
-)
-const inherentSkills: { id: string; state: UnlockState }[] = [{ id: "IS1", state: "none" as UnlockState }, { id: "IS2", state: "none" as UnlockState }]
 
 const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
 
@@ -47,8 +55,8 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                     acc[skill] = { currentSkillLevel: 1, targetSkillLevel: 1 } as SkillState
                     return acc
                 }, {} as Record<string, SkillState>),
-                bonusStats: bonusStats, // Example: 8 booleans for 2 ranks of 4 stats each
-                inherentSkills: inherentSkills // Example: 2 booleans for inherent skills
+                bonusStats: generateBonusStats(),
+                inherentSkills: generateIhnerentSills()
             }
         }
 
@@ -72,6 +80,26 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
             const updated = updateSkillLevel(prev, character.id, skillName, currentOrTarget, lvl)
             localStorage.setItem("characterState", JSON.stringify(updated))
             return updated ?? prev
+        })
+    }
+
+    const updateTalents = (type: 'bonusStats' | 'inherentSkills', id: string, newState: UnlockState) => {
+        if (!character) return
+
+        setCharacterState(prev => {
+            const updated = { ...prev }
+            const char = updated[character.id]
+
+            if (!char) return prev
+
+            const list = char[type]
+            const index = list.findIndex(i => i.id === id)
+            if (index >= 0) {
+                list[index] = { ...list[index], state: newState }
+                localStorage.setItem("characterState", JSON.stringify(updated))
+            }
+
+            return updated
         })
     }
 
@@ -153,65 +181,51 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 </div>
                                 <div className='space-y-4'>
                                     <div className='flex flex-col gap-4'>
-                                        <div>
-                                            <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Stat bonus Rank 1</h4>
-                                            <div className='flex items-center justify-center gap-2'>
-                                                {[...Array(4)].map(() => (
-                                                    <ToggleGroup
-                                                        className='flex flex-row'
-                                                        type='single'>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='planned'>
-                                                            <Flag />
-                                                        </ToggleGroupItem>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='done'>
-                                                            <Check />
-                                                        </ToggleGroupItem>
-                                                    </ToggleGroup>
-                                                ))}
+                                        {ranks.map(rank => (
+                                            <div key={rank}>
+                                                <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Stat bonus Rank {rank}</h4>
+                                                <div className='flex items-center justify-center gap-2'>
+                                                    {characterState[character.id]?.bonusStats
+                                                        .filter(b => b.rank === rank)
+                                                        .map(bonus => (
+                                                            <ToggleGroup
+                                                                className='flex flex-row'
+                                                                type='single'
+                                                                key={bonus.id}
+                                                                value={bonus.state}
+                                                                onValueChange={val => updateTalents('bonusStats', bonus.id, val as UnlockState)}>
+                                                                <ToggleGroupItem
+                                                                    value='planned'
+                                                                    className='bg-gray-600 hover:bg-gray-500'>
+                                                                    <Flag />
+                                                                </ToggleGroupItem>
+                                                                <ToggleGroupItem
+                                                                    value='done'
+                                                                    className='bg-gray-600 hover:bg-gray-500'>
+                                                                    <Check />
+                                                                </ToggleGroupItem>
+                                                            </ToggleGroup>
+                                                        ))}
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Stat bonus Rank 2</h4>
-                                            <div className='flex items-center justify-center gap-2'>
-                                                {[...Array(4)].map(() => (
-                                                    <ToggleGroup
-                                                        className='flex flex-row'
-                                                        type='multiple'>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='planned'>
-                                                            <Flag />
-                                                        </ToggleGroupItem>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='done'>
-                                                            <Check />
-                                                        </ToggleGroupItem>
-                                                    </ToggleGroup>
-                                                ))}
-                                            </div>
-                                        </div>
+                                        ))
+                                        }
 
                                         <div>
                                             <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Inherent Skills</h4>
                                             <div className='flex items-center justify-center gap-2'>
-                                                {[...Array(2)].map(() => (
+                                                {characterState[character.id]?.inherentSkills.map(skill => (
                                                     <ToggleGroup
+                                                        key={skill.id}
                                                         className='flex flex-row'
-                                                        type='multiple'>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='planned'>
+                                                        type="single"
+                                                        value={skill.state}
+                                                        onValueChange={val => updateTalents('inherentSkills', skill.id, val as UnlockState)}
+                                                    >
+                                                        <ToggleGroupItem className='bg-gray-600 hover:bg-gray-500' value='planned'>
                                                             <Flag />
                                                         </ToggleGroupItem>
-                                                        <ToggleGroupItem
-                                                            className='bg-gray-600 hover:bg-gray-500'
-                                                            value='done'>
+                                                        <ToggleGroupItem className='bg-gray-600 hover:bg-gray-500' value='done'>
                                                             <Check />
                                                         </ToggleGroupItem>
                                                     </ToggleGroup>
