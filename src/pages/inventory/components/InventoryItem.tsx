@@ -29,13 +29,14 @@ const InventoryItem = ({ item, state, onChange }: InventoryItemProps) => {
 
     const placeholderPath = useMemo(() => `${axiosInstance.defaults.baseURL}/materials/placeholder/icon.png`, [])
     const isEnough = state.owned >= state.required
+    const isEmpty = state.required === 0
 
     const handleError = useCallback(() => {
         setImgSrc(placeholderPath)
     }, [placeholderPath])
 
     return (
-        <div className="flex flex-col items-center border rounded bg-gray-800">
+        <div className={`flex flex-col items-center border rounded bg-gray-800 transition-opacity ${isEmpty ? "opacity-60" : "opacity-100"}`}>
             <div className="flex justify-center relative w-full h-16">
                 <Tooltip>
                     <TooltipTrigger>
@@ -57,7 +58,7 @@ const InventoryItem = ({ item, state, onChange }: InventoryItemProps) => {
             </div>
             <div className="flex w-full flex-col">
                 <span
-                    className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${isEnough ? "bg-green-400" : "bg-red-400"}`}>
+                    className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${isEmpty ? "bg-gray-500" : isEnough ? "bg-green-400" : "bg-red-400"}`}>
                     {state.required}
                 </span>
                 <input

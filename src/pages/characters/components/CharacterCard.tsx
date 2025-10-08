@@ -7,12 +7,21 @@ interface CharacterCardProps {
     setSelectedCharacter: (character: Character) => void;
 }
 
+const rarityColors: Record<number, string> = {
+  4: "from-purple-600",
+  5: "from-yellow-400",
+}
+
+const getRarityColor = (rarity: number) => {
+  return rarityColors[rarity] ?? "from-transparent"
+}
+
 const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCharacter }: CharacterCardProps) => {
     return (
         <div
             className='flex flex-col items-center cursor-pointer'
             onClick={() => setSelectedCharacter(character)}>
-            <div className='relative bg-gradient-to-b rounded-xl justify-between items-center from-gray-600 to-gray-800'>
+            <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(character.rarity)} to-gray-800`}>
                 <img
                     src={characterIcon}
                     alt={character.name}

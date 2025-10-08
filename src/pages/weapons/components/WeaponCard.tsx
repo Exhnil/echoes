@@ -6,12 +6,23 @@ interface WeaponCardProps {
   setSelectedWeapon: (weapon: Weapon) => void;
 }
 
+const rarityColors: Record<number, string> = {
+  2: "from-green-400",
+  3: "from-blue-400",
+  4: "from-purple-600",
+  5: "from-yellow-400",
+}
+
+const getRarityColor = (rarity: number) => {
+  return rarityColors[rarity] ?? "from-transparent"
+}
+
 const WeaponCard = ({ weapon, weaponIcon, setSelectedWeapon }: WeaponCardProps) => {
   return (
     <div
       className="flex flex-col items-center cursor-pointer"
       onClick={() => setSelectedWeapon(weapon)}>
-      <div className="relative bg-gradient-to-b rounded-xl justify-between items-center from-gray-600 to-gray-800">
+      <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(weapon.rarity)} to-gray-800`}>
         <img
           src={weaponIcon}
           alt={weapon.name}
