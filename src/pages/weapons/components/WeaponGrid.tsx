@@ -17,8 +17,8 @@ const WeaponGrid = ({ rarity, weaponType }: WeaponGridProps) => {
   const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null)
 
   useEffect(() => {
-    fetchWeapons()
-  }, [fetchWeapons])
+    if (weapons.length === 0) fetchWeapons()
+  }, [fetchWeapons, weapons.length])
 
   const getWeaponIcon = useCallback((id: string) => {
     const url = `${axiosInstance.defaults.baseURL}/weapons/${id.toLowerCase()}/icon.png`

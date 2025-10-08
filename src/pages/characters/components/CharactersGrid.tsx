@@ -19,8 +19,8 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
     const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null)
 
     useEffect(() => {
-        fetchCharacters()
-    }, [fetchCharacters])
+        if (characters.length === 0) fetchCharacters()
+    }, [characters.length, fetchCharacters])
 
     const getCharacterIcon = useCallback((id: string) => {
         const url = `${axiosInstance.defaults.baseURL}/characters/${id.toLowerCase()}/icon.png`

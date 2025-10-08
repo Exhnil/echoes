@@ -3,15 +3,17 @@ import type { CharacterState, WeaponState } from "@/types";
 export const updateCharacterLevel = (
   prev: Record<string, CharacterState>,
   characterId: string,
-  key: "currentAscensionLevel" | "targetAscensionLevel",
-  value: number
+  key: "current" | "target",
+  level: number,
+  ascension: number
 ) => ({
   ...prev,
   [characterId]: {
     ...prev[characterId],
     level: {
       ...prev[characterId].level,
-      [key]: value,
+      [key + "Level"]: level,
+      [key + "AscensionLevel"]: ascension,
     },
   },
 });
@@ -44,15 +46,17 @@ export const updateTalents = () => {};
 export const updateWeaponLevel = (
   prev: Record<string, WeaponState>,
   id: string,
-  key: string,
-  lvl: number
+  key: "current" | "target",
+  lvl: number,
+  ascension: number
 ) => ({
   ...prev,
   [id]: {
     ...prev[id],
     level: {
       ...prev[id].level,
-      [key]: lvl,
+      [key + "level"]: lvl,
+      [key + "AscensionLevel"]: ascension,
     },
   },
 });

@@ -30,33 +30,36 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
     if (!parsed[weapon.id]) {
       parsed[weapon.id] = {
         id: weapon.id,
-        level: { ascensionLevel: 1, currentAscensionLevel: 1, targetAscensionLevel: 1 }
+        level: { currentLevel: 1, targetLevel: 1, currentAscensionLevel: 0, targetAscensionLevel: 0 }
       }
     }
 
     setWeaponState(parsed)
   }, [weapon])
 
-  const updateLevel = (currentOrTarget: "currentAscensionLevel" | "targetAscensionLevel", lvl: number) => {
+  const updateLevel = (currentOrTarget: "current" | "target", lvl: number, ascension: number) => {
     if (!weapon) return
 
     setWeaponState(prev => {
-      const updated = updateWeaponLevel(prev, weapon.id, currentOrTarget, lvl)
+      const updated = updateWeaponLevel(prev, weapon.id, currentOrTarget, lvl, ascension)
 
       const weap = updated?.[weapon.id]
 
       if (!weap) return prev
 
-      const current = weap.level.currentAscensionLevel
-      const target = weap.level.targetAscensionLevel
+      const currentAscension = weap.level.currentAscensionLevel;
+      const targetAscension = weap.level.targetAscensionLevel;
+      const currentLvl = weap.level.currentLevel;
+      const targetLvl = weap.level.targetLevel;
 
-      if (current > target) {
-        weap.level.targetAscensionLevel = current
+      if (currentAscension > targetAscension || (currentAscension === targetAscension && currentLvl > targetLvl)) {
+        weap.level.targetAscensionLevel = currentAscension;
+        weap.level.targetLevel = currentLvl;
       }
 
       localStorage.setItem("weaponState", JSON.stringify(updated))
       return updated ?? prev
-      
+
     })
   }
 
@@ -84,12 +87,14 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
           </div>
           <div className='flex items-center justify-center space-x-4'>
             <LevelSelector
-              value={weaponState[weapon.id]?.level.currentAscensionLevel}
-              onSelect={(lvl) => updateLevel("currentAscensionLevel", lvl)} />
+              ascension={weaponState[weapon.id]?.level.currentAscensionLevel}
+              level={weaponState[weapon.id]?.level.currentLevel}
+              onSelect={(lvl, ascension) => updateLevel("current", lvl, ascension)} />
             <ChevronRight className='h-6 w-6' />
             <LevelSelector
-              value={weaponState[weapon.id]?.level.targetAscensionLevel}
-              onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)}
+              ascension={weaponState[weapon.id]?.level.targetAscensionLevel}
+              level={weaponState[weapon.id]?.level.targetLevel}
+              onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
               minValue={weaponState[weapon.id]?.level.currentAscensionLevel} />
           </div>
         </div>

@@ -20,7 +20,7 @@ export interface Material {
 }
 
 interface AscensionMaterials {
-    [level: string]: Material[];
+    [ascensionLevel: string]: Material[];
 }
 
 interface SkillMaterials {
@@ -28,11 +28,11 @@ interface SkillMaterials {
 }
 
 interface StatsBonusMaterials {
-    [level: string]: Material[];
+    [rank: string]: Material[];
 }
 
 interface InherentSkillMaterials {
-    [level: string]: Material[];
+    [rank: string]: Material[];
 }
 
 export interface CharacterState {
@@ -44,9 +44,10 @@ export interface CharacterState {
 }
 
 interface levelState {
-    ascensionLevel: number;
     currentAscensionLevel: number;
-    targetAscensionLevel: number;
+    targetAscensionLevel:number
+    currentLevel: number;
+    targetLevel: number;
 }
 
 export interface SkillState {

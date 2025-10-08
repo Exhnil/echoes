@@ -9,6 +9,7 @@ import { Check, ChevronRight, Flag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SkillLevelInput from './SkillLevelInput'
 import LevelSelector from './LevelSelector'
+import { Button } from '@/components/ui/button'
 
 interface CharacterModalProps {
     character: Character | null
@@ -50,7 +51,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         if (!parsed[character.id]) {
             parsed[character.id] = {
                 id: character.id,
-                level: { ascensionLevel: 1, currentAscensionLevel: 1, targetAscensionLevel: 1 },
+                level: { currentLevel: 1, targetLevel: 1, currentAscensionLevel: 0, targetAscensionLevel: 0 },
                 skills: skillNames.reduce((acc, skill) => {
                     acc[skill] = { currentSkillLevel: 1, targetSkillLevel: 1 } as SkillState
                     return acc
@@ -63,20 +64,23 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         setCharacterState(parsed)
     }, [character])
 
-    const updateLevel = (currentOrTarget: "currentAscensionLevel" | "targetAscensionLevel", lvl: number) => {
+    const updateLevel = (currentOrTarget: "current" | "target", lvl: number, ascension: number) => {
         if (!character) return
 
         setCharacterState(prev => {
-            const updated = updateCharacterLevel(prev, character.id, currentOrTarget, lvl)
+            const updated = updateCharacterLevel(prev, character.id, currentOrTarget, lvl, ascension)
             const char = updated?.[character.id]
 
             if (!char) return prev
 
-            const current = char.level.currentAscensionLevel
-            const target = char.level.targetAscensionLevel
+            const currentAscension = char.level.currentAscensionLevel;
+            const targetAscension = char.level.targetAscensionLevel;
+            const currentLvl = char.level.currentLevel;
+            const targetLvl = char.level.targetLevel;
 
-            if (current > target) {
-                char.level.targetAscensionLevel = current
+            if (currentAscension > targetAscension || (currentAscension === targetAscension && currentLvl > targetLvl)) {
+                char.level.targetAscensionLevel = currentAscension;
+                char.level.targetLevel = currentLvl;
             }
 
             localStorage.setItem("characterState", JSON.stringify(updated))
@@ -114,6 +118,30 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         })
     }
 
+    const resetCharacter = (id: string) => {
+        setCharacterState(prev => {
+            const updated = { ...prev }
+            const char = updated[id]
+            if (!char) return prev
+
+            char.level.currentAscensionLevel = 0
+            char.level.targetAscensionLevel = 0
+            char.level.currentLevel = 1
+            char.level.targetLevel = 1
+
+            Object.keys(char.skills).forEach(skill => {
+                char.skills[skill].currentSkillLevel = 1
+                char.skills[skill].targetSkillLevel = 1
+            })
+
+            char.bonusStats.forEach(stat => (stat.state = "none"))
+            char.inherentSkills.forEach(stat => (stat.state = "none"))
+
+            localStorage.setItem("characterState", JSON.stringify(updated))
+            return updated
+        })
+    }
+
     if (!character) return null
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -129,6 +157,14 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                     <DialogTitle className='text-2xl font-bold'>
                         {character.name}
                     </DialogTitle>
+                    <div>
+                        <Button
+                            variant='destructive'
+                            size='sm'
+                            onClick={() => resetCharacter(character.id)}
+                        >Reset
+                        </Button>
+                    </div>
                 </DialogHeader>
                 <div className='p-2'>
                     <Tabs defaultValue='level' className='w-full'>
@@ -150,14 +186,16 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
 
                             <div className='flex items-center justify-center space-x-4'>
                                 <LevelSelector
-                                    value={characterState[character.id]?.level.currentAscensionLevel}
-                                    onSelect={(lvl) => updateLevel("currentAscensionLevel", lvl)}
+                                    ascension={characterState[character.id]?.level.currentAscensionLevel}
+                                    level={characterState[character.id]?.level.currentLevel}
+                                    onSelect={(lvl, ascension) => updateLevel("current", lvl, ascension)}
                                 />
                                 <ChevronRight className='h-6 w-6' />
                                 <LevelSelector
-                                    value={characterState[character.id]?.level.targetAscensionLevel}
-                                    onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)}
-                                    minValue={characterState[character.id]?.level.currentAscensionLevel}
+                                    ascension={characterState[character.id]?.level.targetAscensionLevel}
+                                    level={characterState[character.id]?.level.targetLevel}
+                                    onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
+                                    minValue={characterState[character.id]?.level.currentLevel ?? 1}
                                 />
                             </div>
                         </TabsContent>
