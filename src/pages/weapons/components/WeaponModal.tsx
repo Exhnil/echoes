@@ -42,7 +42,6 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
 
     setWeaponState(prev => {
       const updated = updateWeaponLevel(prev, weapon.id, currentOrTarget, lvl, ascension)
-
       const weap = updated?.[weapon.id]
 
       if (!weap) return prev

@@ -55,7 +55,7 @@ export const updateWeaponLevel = (
     ...prev[id],
     level: {
       ...prev[id].level,
-      [key + "level"]: lvl,
+      [key + "Level"]: lvl,
       [key + "AscensionLevel"]: ascension,
     },
   },
