@@ -130,10 +130,6 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 value='forte'
                                 className='data-[state-active]:bg-gray-700 data-[state-active]:text-white'
                             >Forte</TabsTrigger>
-                            <TabsTrigger
-                                value='weapon'
-                                className='data-[state-active]:bg-gray-700 data-[state-active]:text-white'
-                            >Weapon</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value='level' className='space-y-4'>
@@ -236,11 +232,6 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 </div>
                             </div>
                         </TabsContent>
-                        {/* <TabsContent value='weapon' className='space-y-4'>
-                            <div className='bg-gray-800 text-center p-2 rounded-md font-medium'>
-                                Weapon
-                            </div>
-                        </TabsContent>*/}
                     </Tabs>
                 </div>
             </DialogContent>

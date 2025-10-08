@@ -30,12 +30,10 @@ const Inventory = () => {
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
 
   useEffect(() => {
-    if (items.length === 0) return
-
-    let savedItems: ItemState[] = [];
+    if (items.length === 0 || characters.length === 0 || weapons.length === 0) return
 
     const savedJson = localStorage.getItem(STORAGE_KEY);
-    savedItems = savedJson ? JSON.parse(savedJson) : [];
+    const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
     const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
 
     const savedCharacters = localStorage.getItem("characterState")
@@ -43,14 +41,11 @@ const Inventory = () => {
 
     const savedWeapons = localStorage.getItem("weaponState")
     const parsedWeapons: Record<string, WeaponState> = savedWeapons ? JSON.parse(savedWeapons) : {}
-
-    if (characters.length === 0) return
-
+    
     const result = calculate(characters, weapons, parsedCharacters, parsedWeapons)
     setRequiredMaterials(result)
 
-
-    const merged: ItemState[] = items.map((item: Item) => {
+    const merged = items.map((item: Item) => {
       return {
         id: item.id,
         name: item.name,

@@ -22,7 +22,6 @@ export const useWeaponStore = create<WeaponStore>((set) => ({
     set({ isLoading: true });
     try {
       const response = await axiosInstance.get("/weapons/all");
-      console.log(response.data)
       set({ weapons: response.data });
     } catch (error: unknown) {
       let errorMessage = "An unknown error occurred";
