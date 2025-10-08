@@ -42,8 +42,21 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
 
     setWeaponState(prev => {
       const updated = updateWeaponLevel(prev, weapon.id, currentOrTarget, lvl)
+
+      const weap = updated?.[weapon.id]
+
+      if (!weap) return prev
+
+      const current = weap.level.currentAscensionLevel
+      const target = weap.level.targetAscensionLevel
+
+      if (current > target) {
+        weap.level.targetAscensionLevel = current
+      }
+
       localStorage.setItem("weaponState", JSON.stringify(updated))
       return updated ?? prev
+      
     })
   }
 
@@ -76,7 +89,8 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
             <ChevronRight className='h-6 w-6' />
             <LevelSelector
               value={weaponState[weapon.id]?.level.targetAscensionLevel}
-              onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)} />
+              onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)}
+              minValue={weaponState[weapon.id]?.level.currentAscensionLevel} />
           </div>
         </div>
       </DialogContent>

@@ -68,6 +68,17 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
 
         setCharacterState(prev => {
             const updated = updateCharacterLevel(prev, character.id, currentOrTarget, lvl)
+            const char = updated?.[character.id]
+
+            if (!char) return prev
+
+            const current = char.level.currentAscensionLevel
+            const target = char.level.targetAscensionLevel
+
+            if (current > target) {
+                char.level.targetAscensionLevel = current
+            }
+
             localStorage.setItem("characterState", JSON.stringify(updated))
             return updated ?? prev
         })
@@ -146,6 +157,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 <LevelSelector
                                     value={characterState[character.id]?.level.targetAscensionLevel}
                                     onSelect={(lvl) => updateLevel("targetAscensionLevel", lvl)}
+                                    minValue={characterState[character.id]?.level.currentAscensionLevel}
                                 />
                             </div>
                         </TabsContent>

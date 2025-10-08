@@ -7,9 +7,10 @@ import { Star } from "lucide-react"
 interface LevelSelectorProps {
     value: number
     onSelect: (lvl: number) => void
+    minValue?: number
 }
 
-const LevelSelector = ({ value, onSelect }: LevelSelectorProps) => {
+const LevelSelector = ({ value, onSelect, minValue = 1 }: LevelSelectorProps) => {
     const [open, setOpen] = useState(false)
 
     return (
@@ -26,25 +27,29 @@ const LevelSelector = ({ value, onSelect }: LevelSelectorProps) => {
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-gray-800">
                 <div className="grid grid-cols-4 gap-2">
-                    {LEVELS.map((lvl) => (
-                        <Button
-                            key={lvl}
-                            variant="outline"
-                            size="sm"
-                            className="rounded-full"
-                            onClick={() => {
-                                onSelect(lvl)
-                                setOpen(false)
-                            }}
-                        >
-                            {lvl}
-                            <Star
-                                className="w-4 h-4"
-                                stroke="white"
-                                fill="white"
-                            />
-                        </Button>
-                    ))}
+                    {LEVELS.map((lvl) => {
+                        const disabled = lvl < minValue
+                        return (
+                            <Button
+                                key={lvl}
+                                variant="outline"
+                                size="sm"
+                                className="rounded-full"
+                                disabled={disabled}
+                                onClick={() => {
+                                    onSelect(lvl)
+                                    setOpen(false)
+                                }}
+                            >
+                                {lvl}
+                                <Star
+                                    className="w-4 h-4"
+                                    stroke="white"
+                                    fill="white"
+                                />
+                            </Button>
+                        )
+                    })}
                 </div>
             </PopoverContent>
         </Popover>
