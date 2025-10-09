@@ -75,12 +75,15 @@ const Inventory = () => {
   }, [characters, itemsState, weapons])
 
   const handleOwnedChange = (id: string, value: number) => {
-    setItemsState((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, owned: value } : item)
-    )
+    setItemsState((prev) => {
+      const updated = prev.map((item) =>
+        item.id === id ? { ...item, owned: value } : item
+      )
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
+      return updated
+    })
+
   }
 
   const variantMap = new Map<string, string>()
