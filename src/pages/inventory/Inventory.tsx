@@ -34,18 +34,18 @@ const Inventory = () => {
     const savedJson = localStorage.getItem(STORAGE_KEY);
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
 
-    const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
+    //const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
 
-    const state = items.map((item) => {
+    /*const state = items.map((item) => {
       return {
         id: item.id,
         name: item.name,
         owned: itemsStateMap[item.id]?.owned ?? 0,
         required: itemsStateMap[item.id]?.required ?? 0
       };
-    });
+    });*/
 
-    setItemsState(state);
+    setItemsState(savedItems);
   }, [items]);
 
   useEffect(() => {
