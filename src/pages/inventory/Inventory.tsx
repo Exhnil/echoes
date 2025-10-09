@@ -71,7 +71,6 @@ const Inventory = () => {
         required: result[item.name]?.value ?? 0
       }))
     )
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
 
   }, [characters, itemsState, weapons])
 
@@ -80,6 +79,8 @@ const Inventory = () => {
       prev.map((item) =>
         item.id === id ? { ...item, owned: value } : item)
     )
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
   }
 
   const variantMap = new Map<string, string>()
