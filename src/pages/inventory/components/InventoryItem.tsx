@@ -1,12 +1,15 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
 import type { Item, ItemState } from "@/types";
+import { Hammer } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 interface InventoryItemProps {
     item: Item;
     state: ItemState;
+    craftable: number;
     onChange: (value: number) => void;
+    onCraft: () => void;
 }
 
 const rarityColors: Record<number, string> = {
@@ -24,7 +27,7 @@ const getRarityColor = (rarity: number) => {
     return rarityColors[rarity] ?? "from-transparent"
 }
 
-const InventoryItem = ({ item, state, onChange }: InventoryItemProps) => {
+const InventoryItem = ({ item, state, craftable, onChange, onCraft }: InventoryItemProps) => {
     const [imgSrc, setImgSrc] = useState(getMaterialIcon(item.id.replace(/-/g, "_")));
 
     const placeholderPath = useMemo(() => `${axiosInstance.defaults.baseURL}/materials/placeholder/icon.png`, [])
@@ -38,18 +41,34 @@ const InventoryItem = ({ item, state, onChange }: InventoryItemProps) => {
     return (
         <div className={`flex flex-col items-center border rounded bg-gray-800 transition-opacity ${isEmpty ? "opacity-60" : "opacity-100"}`}>
             <div className="flex justify-center relative w-full h-16">
+                {craftable > 0 && (
+                    <button
+                        className="absolute top-1 left-1 p-1 bg-gray-700/70 hover:bg-gray-600/80 text-white rounded-full shadow-md flex items-center justify-center text-xs z-10"
+                        onClick={onCraft}
+                    >
+                        <Hammer size={14} />
+                    </button>
+                )
+                }
                 <Tooltip>
                     <TooltipTrigger>
                         <img
                             src={imgSrc}
                             onError={handleError}
                             alt={item.name}
-                            className="w-16 h-full object-contain"
+                            className="w-16 h-full object-contain rounded-md"
                         />
                         {item.rarity > 1 && (
                             <div
                                 className={`absolute bottom-0 left-0 w-full h-5 bg-gradient-to-t ${getRarityColor(item.rarity)} to-transparent`} />
                         )}
+                        {craftable > 0 &&
+                            <div
+                                className="absolute top-1 right-1 px-1.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-lg z-10"
+                            >
+                                {craftable}
+                            </div>
+                        }
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>{item.name}</p>

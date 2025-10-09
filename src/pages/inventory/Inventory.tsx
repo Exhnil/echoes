@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button";
 import { materialsGroups, typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
+import { getCraftableAmount } from "@/lib/crafting";
 
 const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
@@ -30,14 +31,14 @@ const Inventory = () => {
 
   useEffect(() => {
     if (!items.length) {
-      console.log("[Inventory] items empty, skipping init");
+      //console.log("[Inventory] items empty, skipping init");
       return
     }
     const savedJson = localStorage.getItem(STORAGE_KEY);
-    console.log("[Inventory] raw localStorage:", savedJson);
+    // console.log("[Inventory] raw localStorage:", savedJson);
 
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
-    console.log("[Inventory] parsed items:", savedItems);
+    //console.log("[Inventory] parsed items:", savedItems);
     setItemsState(savedItems);
 
     const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
@@ -73,6 +74,25 @@ const Inventory = () => {
     )
 
   }, [characters, itemsState.length, weapons])
+
+  const handleCraft = (itemId: string) => {
+    const item = items.find(i => i.id === itemId)
+    if (!item) return
+
+    const source = items.find(i => i.group === item.group && i.rarity === item.rarity - 1);
+    if (!source) return
+
+    const sourceState = itemsState.find(s => s.id === source.id)
+    if (!sourceState || sourceState.owned < 3) return
+
+    setItemsState(prev =>
+      prev.map(s => {
+        if (s.id === source.id) return { ...s, owned: s.owned - 3 }
+        if (s.id === item.id) return { ...s, owned: s.owned + 1 }
+        return s
+      })
+    )
+  }
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) => {
@@ -169,6 +189,7 @@ const Inventory = () => {
               .sort(sortItems)
               .map((item) => {
                 const state = itemsState.find(s => s.id === item.id)
+                const craftable = getCraftableAmount(item.id, itemsState, items)
                 if (!state) return null
                 if (showOnlyRequired && (state.required ?? 0) <= 0) {
                   return null
@@ -178,7 +199,9 @@ const Inventory = () => {
                     key={item.id}
                     item={item}
                     state={state}
-                    onChange={(value) => handleOwnedChange(item.id, value)} />
+                    onChange={(value) => handleOwnedChange(item.id, value)}
+                    craftable={craftable}
+                    onCraft={() => handleCraft(item.id)} />
                 )
               })
           }

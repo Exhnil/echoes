@@ -45,7 +45,7 @@ export interface CharacterState {
 
 interface levelState {
     currentAscensionLevel: number;
-    targetAscensionLevel:number
+    targetAscensionLevel: number
     currentLevel: number;
     targetLevel: number;
 }
@@ -84,11 +84,12 @@ export interface WeaponState {
 }
 
 export interface Item {
-    name: string,
-    id: string,
-    type: string,
-    rarity: number,
-    source: string
+    name: string;
+    id: string;
+    type: string;
+    rarity: number;
+    source: string;
+    group: string;
 }
 
 export interface ItemState {
@@ -96,4 +97,10 @@ export interface ItemState {
     name: string;
     owned: number;
     required: number;
+}
+
+export interface CraftRecipe {
+    outputId: string;
+    inputs: { id: string; amounf: number };
+    cost?: number
 }
