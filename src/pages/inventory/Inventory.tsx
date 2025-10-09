@@ -29,11 +29,19 @@ const Inventory = () => {
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
 
   useEffect(() => {
-    if (!items.length) return
-
+    if (!items.length) {
+      console.log("[Inventory] items empty, skipping init");
+      return
+    }
     const savedJson = localStorage.getItem(STORAGE_KEY);
-    const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
-
+    console.log("[Inventory] raw localStorage:", savedJson);
+    try {
+      const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
+      console.log("[Inventory] parsed items:", savedItems);
+      setItemsState(savedItems);
+    } catch (e) {
+      console.error("[Inventory] JSON parse error:", e);
+    }
     //const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
 
     /*const state = items.map((item) => {
@@ -45,7 +53,7 @@ const Inventory = () => {
       };
     });*/
 
-    setItemsState(savedItems);
+    //setItemsState(savedItems);
   }, [items]);
 
   useEffect(() => {
