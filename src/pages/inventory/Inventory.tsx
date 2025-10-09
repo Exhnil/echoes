@@ -35,25 +35,23 @@ const Inventory = () => {
     }
     const savedJson = localStorage.getItem(STORAGE_KEY);
     console.log("[Inventory] raw localStorage:", savedJson);
-    try {
-      const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
-      console.log("[Inventory] parsed items:", savedItems);
-      setItemsState(savedItems);
-    } catch (e) {
-      console.error("[Inventory] JSON parse error:", e);
-    }
-    //const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
 
-    /*const state = items.map((item) => {
+    const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
+    console.log("[Inventory] parsed items:", savedItems);
+    setItemsState(savedItems);
+
+    const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
+
+    const state = items.map((item) => {
       return {
         id: item.id,
         name: item.name,
         owned: itemsStateMap[item.id]?.owned ?? 0,
         required: itemsStateMap[item.id]?.required ?? 0
       };
-    });*/
+    });
 
-    //setItemsState(savedItems);
+    setItemsState(state);
   }, [items]);
 
   useEffect(() => {
@@ -73,8 +71,9 @@ const Inventory = () => {
         required: result[item.name]?.value ?? 0
       }))
     )
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
 
-  }, [characters, itemsState.length, weapons])
+  }, [characters, itemsState, weapons])
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) =>
@@ -104,14 +103,6 @@ const Inventory = () => {
 
     return a.name.localeCompare(b.name)
   }
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
-    }, 300)
-
-    return () => clearTimeout(timeout)
-  }, [itemsState])
 
   return (
     <div className="p-6">

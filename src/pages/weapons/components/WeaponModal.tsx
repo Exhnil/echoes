@@ -58,7 +58,6 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
 
       localStorage.setItem("weaponState", JSON.stringify(updated))
       return updated ?? prev
-
     })
   }
 
