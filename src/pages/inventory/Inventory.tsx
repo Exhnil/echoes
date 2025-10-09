@@ -72,7 +72,7 @@ const Inventory = () => {
       }))
     )
 
-  }, [characters, itemsState, weapons])
+  }, [characters, itemsState.length, weapons])
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) => {
@@ -80,7 +80,7 @@ const Inventory = () => {
         item.id === id ? { ...item, owned: value } : item
       )
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(itemsState))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
       return updated
     })
 
