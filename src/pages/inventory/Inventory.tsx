@@ -29,6 +29,8 @@ const Inventory = () => {
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
 
   useEffect(() => {
+    if (!items.length) return
+
     const savedJson = localStorage.getItem(STORAGE_KEY);
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
 
