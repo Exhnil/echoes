@@ -19,7 +19,6 @@ const Inventory = () => {
   const { weapons, fetchWeapons } = useWeaponStore()
 
   const [itemsState, setItemsState] = useState<ItemState[]>([]);
-  const [requiredMaterials, setRequiredMaterials] = useState<Record<string, { value: number }>>({});
   const [showOnlyRequired, setShowOnlyRequired] = useState(false)
 
   useEffect(() => {
@@ -30,32 +29,42 @@ const Inventory = () => {
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
 
   useEffect(() => {
-    if (items.length === 0 || characters.length === 0 || weapons.length === 0) return
-
     const savedJson = localStorage.getItem(STORAGE_KEY);
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
+
     const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
+
+    const state = items.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        owned: itemsStateMap[item.id]?.owned ?? 0,
+        required: itemsStateMap[item.id]?.required ?? 0
+      };
+    });
+
+    setItemsState(state);
+  }, [items]);
+
+  useEffect(() => {
+    if (!itemsState.length) return
 
     const savedCharacters = localStorage.getItem("characterState")
     const parsedCharacters: Record<string, CharacterState> = savedCharacters ? JSON.parse(savedCharacters) : {}
 
     const savedWeapons = localStorage.getItem("weaponState")
     const parsedWeapons: Record<string, WeaponState> = savedWeapons ? JSON.parse(savedWeapons) : {}
-    
+
     const result = calculate(characters, weapons, parsedCharacters, parsedWeapons)
-    setRequiredMaterials(result)
 
-    const merged = items.map((item: Item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        owned: itemsStateMap[item.id]?.owned ?? 0,
+    setItemsState(prev =>
+      prev.map(item => ({
+        ...item,
         required: result[item.name]?.value ?? 0
-      };
-    });
+      }))
+    )
 
-    setItemsState(merged);
-  }, [characters, items, weapons]);
+  }, [characters, itemsState.length, weapons])
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) =>
@@ -93,15 +102,6 @@ const Inventory = () => {
 
     return () => clearTimeout(timeout)
   }, [itemsState])
-
-  useEffect(() => {
-    setItemsState(prev =>
-      prev.map(item => ({
-        ...item,
-        required: requiredMaterials[item.name]?.value ?? 0
-      }))
-    )
-  }, [requiredMaterials])
 
   return (
     <div className="p-6">
