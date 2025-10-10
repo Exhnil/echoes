@@ -21,12 +21,12 @@ const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCha
         <div
             className='flex flex-col items-center cursor-pointer'
             onClick={() => setSelectedCharacter(character)}>
-            <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(character.rarity)} to-gray-800`}>
+            <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(character.rarity)} to-zinc-800`}>
                 <img
                     src={characterIcon}
                     alt={character.name}
                     className='object-contain' />
-                <div className='absolute top-1 right-1 w-7 h-7 rounded-full bg-gray-900/80 flex items-center justify-center shadow-md'>
+                <div className='absolute top-1 right-1 w-7 h-7 rounded-full bg-zinc-900/80 flex items-center justify-center shadow-md'>
                     <img
                         src={attributeIcon}
                         className='w-5 h-5'

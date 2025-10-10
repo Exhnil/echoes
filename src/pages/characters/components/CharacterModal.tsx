@@ -145,10 +145,10 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
     if (!character) return null
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className='w-[650px] !max-w-none mt-6 p-0 overflow-hidden bg-gray-900 shadow-lg'
+            <DialogContent className='w-[650px] !max-w-none mt-6 p-0 overflow-hidden bg-zinc-900 shadow-lg'
                 style={{ top: "1rem", transform: "translateY(50%)" }}>
-                <DialogHeader className='flex flex-row items-center gap-4 p-4 bg-gradient-to-br from-gray-800 to-gray-700 border-b border-gray-700'>
-                    <div className='w-16 h-16 rounded-full overflow-hidden bg-gray-600 justify-center'>
+                <DialogHeader className='flex flex-row items-center gap-4 p-4 bg-gradient-to-br from-zinc-800 to-zinc-700 border-b border-zinc-700'>
+                    <div className='w-16 h-16 rounded-full overflow-hidden bg-zinc-600 justify-center'>
                         <img
                             src={getCharacterIcon(character.id)}
                             alt={character.name}
@@ -168,19 +168,19 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                 </DialogHeader>
                 <div className='p-2'>
                     <Tabs defaultValue='level' className='w-full'>
-                        <TabsList className='flex w-full justify-center gap-2 mb-4 bg-gray-800 p-1 rounded-lg'>
+                        <TabsList className='flex w-full justify-center gap-2 mb-4 bg-zinc-800 p-1 rounded-lg'>
                             <TabsTrigger
                                 value='level'
-                                className='data-[state-active]:bg-gray-700 data-[state-active]:text-white'
+                                className='data-[state-active]:bg-zinc-700 data-[state-active]:text-white'
                             >Level</TabsTrigger>
                             <TabsTrigger
                                 value='forte'
-                                className='data-[state-active]:bg-gray-700 data-[state-active]:text-white'
+                                className='data-[state-active]:bg-zinc-700 data-[state-active]:text-white'
                             >Forte</TabsTrigger>
                         </TabsList>
 
                         <TabsContent value='level' className='space-y-4'>
-                            <div className='bg-gray-800 text-center p-2 rounded-md font-medium'>
+                            <div className='bg-zinc-800 text-center p-2 rounded-md font-medium'>
                                 Level
                             </div>
 
@@ -200,7 +200,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                             </div>
                         </TabsContent>
                         <TabsContent value='forte' className='space-y-4'>
-                            <div className='bg-gray-800 text-center p-2 rounded-md font-medium'>
+                            <div className='bg-zinc-800 text-center p-2 rounded-md font-medium'>
                                 Forte
                             </div>
 
@@ -208,14 +208,14 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 <div className='space-y-2'>
                                     {skillNames.map((skill) => (
                                         <div className='flex flex-col items-center' key={skill}>
-                                            <div className='rounded px-2 py-0.5 text-sm font-medium bg-gray-600 mb-2'>{skill}</div>
+                                            <div className='rounded px-2 py-0.5 text-sm font-medium bg-zinc-600 mb-2'>{skill}</div>
 
                                             <div className='flex items-center justify-center space-x-2'>
                                                 <SkillLevelInput
                                                     value={characterState[character.id]?.skills[skill].currentSkillLevel ?? 1}
                                                     onChange={(val) => updateSkills("currentSkillLevel", skill, val)} />
 
-                                                <ChevronRight className='h-5 w-5 text-gray-400' />
+                                                <ChevronRight className='h-5 w-5 text-zinc-400' />
 
                                                 <SkillLevelInput
                                                     value={characterState[character.id]?.skills[skill].targetSkillLevel ?? 1}
@@ -229,7 +229,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                     <div className='flex flex-col gap-4'>
                                         {ranks.map(rank => (
                                             <div key={rank}>
-                                                <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Stat bonus Rank {rank}</h4>
+                                                <h4 className='text-sm font-medium mb-2 bg-zinc-600 py-1 px-0.5 rounded text-center'>Stat bonus Rank {rank}</h4>
                                                 <div className='flex items-center justify-center gap-2'>
                                                     {characterState[character.id]?.bonusStats
                                                         .filter(b => b.rank === rank)
@@ -242,12 +242,12 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                                                 onValueChange={val => updateTalents('bonusStats', bonus.id, val as UnlockState)}>
                                                                 <ToggleGroupItem
                                                                     value='planned'
-                                                                    className='bg-gray-600 hover:bg-gray-500'>
+                                                                    className='bg-zinc-600 hover:bg-zinc-500'>
                                                                     <Flag />
                                                                 </ToggleGroupItem>
                                                                 <ToggleGroupItem
                                                                     value='done'
-                                                                    className='bg-gray-600 hover:bg-gray-500'>
+                                                                    className='bg-zinc-600 hover:bg-zinc-500'>
                                                                     <Check />
                                                                 </ToggleGroupItem>
                                                             </ToggleGroup>
@@ -258,7 +258,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                         }
 
                                         <div>
-                                            <h4 className='text-sm font-medium mb-2 bg-gray-600 py-1 px-0.5 rounded text-center'>Inherent Skills</h4>
+                                            <h4 className='text-sm font-medium mb-2 bg-zinc-600 py-1 px-0.5 rounded text-center'>Inherent Skills</h4>
                                             <div className='flex items-center justify-center gap-2'>
                                                 {characterState[character.id]?.inherentSkills.map(skill => (
                                                     <ToggleGroup
@@ -268,10 +268,10 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                                         value={skill.state}
                                                         onValueChange={val => updateTalents('inherentSkills', skill.id, val as UnlockState)}
                                                     >
-                                                        <ToggleGroupItem className='bg-gray-600 hover:bg-gray-500' value='planned'>
+                                                        <ToggleGroupItem className='bg-zinc-600 hover:bg-zinc-500' value='planned'>
                                                             <Flag />
                                                         </ToggleGroupItem>
-                                                        <ToggleGroupItem className='bg-gray-600 hover:bg-gray-500' value='done'>
+                                                        <ToggleGroupItem className='bg-zinc-600 hover:bg-zinc-500' value='done'>
                                                             <Check />
                                                         </ToggleGroupItem>
                                                     </ToggleGroup>

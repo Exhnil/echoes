@@ -14,7 +14,7 @@ const LeftSideBar = () => {
     ]
 
     return (
-        <div className="bg-slate-800 h-screen flex flex-col p-4">
+        <div className="bg-zinc-800 h-screen flex flex-col p-4">
             <div className="mb-8 text-center">
                 <Link to="/" className="text-3xl font-bold block">
                     Echoes
@@ -27,8 +27,8 @@ const LeftSideBar = () => {
                         <Link
                             key={item.name}
                             to={item.href}
-                            className={`mx-6 flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-gray-700 text-zinc-300 transition-colors duration-200
-                                ${isActive ? "bg-slate-900 text-white" : "hover:bg-gray-700/50 hover:text-zinc-300"}`}>
+                            className={`mx-6 flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-zinc-700 text-zinc-300 transition-colors duration-200
+                                ${isActive ? "bg-zinc-900 text-white" : "hover:bg-zinc-700/50 hover:text-zinc-300"}`}>
                             <img
                                 src={menuIcons[item.name]}
                                 alt={item.name}

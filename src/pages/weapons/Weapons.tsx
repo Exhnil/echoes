@@ -31,46 +31,46 @@ const Weapons = () => {
           <div className="flex items-center gap-6">
             <ToggleGroup
               type="single"
-              className="flex bg-gray-800"
+              className="flex bg-zinc-800"
               value={selectedRarity}
               onValueChange={setSelectedRarity}>
               <ToggleGroupItem
                 value="1"
-                className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
-                <Star className="text-gray-400" />
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                <Star className="text-zinc-400" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="2"
-                className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
                 <Star className="text-green-500" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="3"
-                className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
                 <Star className="text-blue-600" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="4"
-                className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
                 <Star className="text-purple-600" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="5"
-                className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
                 <Star className="text-amber-400" />
               </ToggleGroupItem>
             </ToggleGroup>
 
             <ToggleGroup
               type="single"
-              className="flex bg-gray-800"
+              className="flex bg-zinc-800"
               value={selectedWeaponType}
               onValueChange={setSelectedWeaponType}>
               {weaponsTypes.map((weapon) => (
                 <ToggleGroupItem
                   value={weapon}
                   key={weapon}
-                  className="px-3 py-1 border hover:bg-gray-700 cursor-pointer">
+                  className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <img src={weaponIcons[weapon]}

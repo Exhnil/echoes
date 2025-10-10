@@ -38,7 +38,7 @@ const LevelSelector = ({ ascension, level, onSelect, minValue = 1 }: LevelSelect
                     {LEVEL_BUTTONS.find(btn => btn.level === level && btn.asc === ascension)?.label ?? level}
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-64 bg-gray-800">
+            <PopoverContent className="w-64 bg-zinc-800">
                 <div className="grid grid-cols-4 gap-2">
                     {LEVEL_BUTTONS.map((btn) => {
                         const disabled = btn.level < minValue

@@ -34,27 +34,27 @@ const Characters = () => {
           <div className='flex items-center gap-6'>
             <ToggleGroup
               type='single'
-              className='flex bg-gray-800'
+              className='flex bg-zinc-800'
               value={selectedRarity}
               onValueChange={setSelectedRarity}>
-              <ToggleGroupItem value='4' className='px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
+              <ToggleGroupItem value='4' className='px-3 py-1 border hover:bg-zinc-700 cursor-pointer'>
                 <Star className='text-purple-600' />
               </ToggleGroupItem>
-              <ToggleGroupItem value='5' className='px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
+              <ToggleGroupItem value='5' className='px-3 py-1 border hover:bg-zinc-700 cursor-pointer'>
                 <Star className='text-amber-400' />
               </ToggleGroupItem>
             </ToggleGroup>
 
             <ToggleGroup
               type='single'
-              className='flex bg-gray-800'
+              className='flex bg-zinc-800'
               value={selectedAttribute}
               onValueChange={setSelectedAttribute}>
               {attributes.map((attribute) => (
                 <ToggleGroupItem
                   key={attribute}
                   value={attribute}
-                  className='relative px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
+                  className='relative px-3 py-1 border hover:bg-zinc-700 cursor-pointer'>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div>
@@ -81,14 +81,14 @@ const Characters = () => {
 
             <ToggleGroup
               type='single'
-              className="flex bg-gray-800"
+              className="flex bg-zinc-800"
               value={selectedWeapon}
               onValueChange={setSelectedWeapon}>
               {weaponsTypes.map((weapon) => (
                 <ToggleGroupItem
                   key={weapon}
                   value={weapon}
-                  className='px-3 py-1 border hover:bg-gray-700 cursor-pointer'>
+                  className='px-3 py-1 border hover:bg-zinc-700 cursor-pointer'>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <img

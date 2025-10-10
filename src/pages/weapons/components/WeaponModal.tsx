@@ -65,11 +65,11 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className='w-[650px] !max-w-none mt-6 p-0 overflow-hidden bg-gray-900 shadow-lg'
+        className='w-[650px] !max-w-none mt-6 p-0 overflow-hidden bg-zinc-900 shadow-lg'
         style={{ top: "1rem", transform: "translateY(50%" }}>
         <DialogHeader
-          className='flex flex-row items-center gap-4 p-4 bg-gradient-to-br from-gray-800 to bg-gray-700 border-b border-gray-700'>
-          <div className='w-16 h-16 rounded-full overflow-hidden bg-gray-600 justify-center'>
+          className='flex flex-row items-center gap-4 p-4 bg-gradient-to-br from-zinc-800 to bg-zinc-700 border-b border-zinc-700'>
+          <div className='w-16 h-16 rounded-full overflow-hidden bg-zinc-600 justify-center'>
             <img
               src={getWeaponIcon(weapon.id)}
               alt={weapon.name}
@@ -80,7 +80,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
           </DialogTitle>
         </DialogHeader>
         <div className='p-2 space-y-4'>
-          <div className='bg-gray-800 text-center p-2 rounded-md font-medium'>
+          <div className='bg-zinc-800 text-center p-2 rounded-md font-medium'>
             Level
           </div>
           <div className='flex items-center justify-center space-x-4'>

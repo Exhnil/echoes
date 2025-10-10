@@ -39,11 +39,11 @@ const InventoryItem = ({ item, state, craftable, onChange, onCraft }: InventoryI
     }, [placeholderPath])
 
     return (
-        <div className={`flex flex-col items-center border rounded bg-gray-800 transition-opacity ${isEmpty ? "opacity-60" : "opacity-100"}`}>
+        <div className={`flex flex-col items-center border rounded bg-zinc-800 transition-opacity ${isEmpty ? "opacity-60" : "opacity-100"}`}>
             <div className="flex justify-center relative w-full h-16">
                 {craftable > 0 && (
                     <button
-                        className="absolute top-1 left-1 p-1 bg-gray-700/70 hover:bg-gray-600/80 text-white rounded-full shadow-md flex items-center justify-center text-xs z-10"
+                        className="absolute top-1 left-1 p-1 bg-zinc-700/70 hover:bg-zinc-600/80 text-white rounded-full shadow-md flex items-center justify-center text-xs z-10"
                         onClick={onCraft}
                     >
                         <Hammer size={14} />
@@ -77,13 +77,13 @@ const InventoryItem = ({ item, state, craftable, onChange, onCraft }: InventoryI
             </div>
             <div className="flex w-full flex-col">
                 <span
-                    className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${isEmpty ? "bg-gray-500" : isEnough ? "bg-green-400" : "bg-red-400"}`}>
+                    className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${isEmpty ? "bg-zinc-500" : isEnough ? "bg-green-400" : "bg-red-400"}`}>
                     {state.required}
                 </span>
                 <input
                     value={state.owned}
                     onChange={(e) => onChange(Number(e.target.value))}
-                    className="flex-1 text-center rounded-b overflow-hidden px-1 py-0.5 bg-gray-700"
+                    className="flex-1 text-center rounded-b overflow-hidden px-1 py-0.5 bg-zinc-700"
                 />
             </div>
 

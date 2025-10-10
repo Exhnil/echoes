@@ -22,7 +22,7 @@ const WeaponCard = ({ weapon, weaponIcon, setSelectedWeapon }: WeaponCardProps) 
     <div
       className="flex flex-col items-center cursor-pointer"
       onClick={() => setSelectedWeapon(weapon)}>
-      <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(weapon.rarity)} to-gray-800`}>
+      <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(weapon.rarity)} to-zinc-800`}>
         <img
           src={weaponIcon}
           alt={weapon.name}

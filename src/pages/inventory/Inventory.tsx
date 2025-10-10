@@ -136,13 +136,13 @@ const Inventory = () => {
 
       <div className="flex">
         <Button
-          className="text-gray-300 bg-gray-600 hover:bg-gray-700"
+          className="text-zinc-300 bg-zinc-600 hover:bg-zinc-700"
           onClick={() => setShowOnlyRequired(prev => !prev)}
         >{showOnlyRequired ? "Show All" : "Required only"}</Button>
       </div>
 
       <div className="p-2">
-        <div className="flex w-64 flex-row items-stretch border rounded bg-gray-800">
+        <div className="flex w-64 flex-row items-stretch border rounded bg-zinc-800">
           <div className="flex justify-center items-center relative w-16 h-16">
             <Tooltip>
               <TooltipTrigger>
@@ -174,7 +174,7 @@ const Inventory = () => {
                     <input
                       value={state.owned ?? 0}
                       onChange={(e) => handleOwnedChange(item.id, Number(e.target.value))}
-                      className="text-center flex-1 rounded-br px-1 py-0.5 bg-gray-700" />
+                      className="text-center flex-1 rounded-br px-1 py-0.5 bg-zinc-700" />
                   </div>)
               })
           }
