@@ -1,3 +1,7 @@
+Work In Progress
+Hosted here : http://91.107.194.37/
+Saves are located in localstorage
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
