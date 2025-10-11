@@ -41,7 +41,7 @@ const InventoryItem = ({ item, state, craftable, onChange, onCraft }: InventoryI
     return (
         <div className={`flex flex-col items-center border rounded bg-zinc-800 transition-opacity ${isEmpty ? "opacity-60" : "opacity-100"}`}>
             <div className="flex justify-center relative w-full h-16">
-                {craftable > 0 && (
+                {(craftable > 0 && !isEnough) && (
                     <button
                         className="absolute top-1 left-1 p-1 bg-zinc-700/70 hover:bg-zinc-600/80 text-white rounded-full shadow-md flex items-center justify-center text-xs z-10"
                         onClick={onCraft}
@@ -62,7 +62,7 @@ const InventoryItem = ({ item, state, craftable, onChange, onCraft }: InventoryI
                             <div
                                 className={`absolute bottom-0 left-0 w-full h-5 bg-gradient-to-t ${getRarityColor(item.rarity)} to-transparent`} />
                         )}
-                        {craftable > 0 &&
+                        {(craftable > 0 && !isEnough) &&
                             <div
                                 className="absolute top-1 right-1 px-1.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-lg z-10"
                             >
