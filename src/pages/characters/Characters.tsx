@@ -4,7 +4,7 @@ import { Star } from 'lucide-react'
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { attributeIcons, elementColor, weaponIcons } from '@/constants/icons'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import CharacterGridSkeleton from '../skeletons/CharacterGridSkeleton'
+import FilterSkeleton from '../skeletons/FilterSkeleton'
 
 const CharactersGrid = lazy(() => import("./components/CharactersGrid"))
 
@@ -29,7 +29,11 @@ const Characters = () => {
       <div className='mb-6'>
         <span className='block font-semibold mb-2'>Filter</span>
         {isLoading ? (
-          <div>Is loading...</div>
+          <div className="flex">
+            <FilterSkeleton size={2} />
+            <FilterSkeleton size={6} />
+            <FilterSkeleton size={5} />
+          </div>
         ) : (
           <div className='flex items-center gap-6'>
             <ToggleGroup
@@ -107,8 +111,7 @@ const Characters = () => {
         )}
 
       </div>
-      <Suspense fallback={
-        <CharacterGridSkeleton />}>
+      <Suspense>
         <CharactersGrid
           rarity={selectedRarity}
           attribute={selectedAttribute}

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import WeaponModal from './WeaponModal'
 import WeaponCard from './WeaponCard'
 import React from 'react'
+import WeaponGridSkeleton from '@/pages/skeletons/WeaponGridSkeleton'
 
 interface WeaponGridProps {
   rarity: string
@@ -12,9 +13,10 @@ interface WeaponGridProps {
 }
 
 const WeaponGrid = ({ rarity, weaponType }: WeaponGridProps) => {
-  const { weapons, fetchWeapons } = useWeaponStore()
+  const { weapons, fetchWeapons, isLoading } = useWeaponStore()
 
   const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null)
+  const [imagesLoaded, setImagesLoaded] = useState(false)
 
   useEffect(() => {
     if (weapons.length === 0) fetchWeapons()
@@ -32,21 +34,45 @@ const WeaponGrid = ({ rarity, weaponType }: WeaponGridProps) => {
     ))
   }, [weapons, rarity, weaponType])
 
+  useEffect(() => {
+    if (weapons.length === 0) return
+
+    let loadedCount = 0
+    const total = filteredWeapons.length
+
+    filteredWeapons.forEach((weapon) => {
+      const img = new Image()
+      img.src = getWeaponIcon(weapon.id)
+      img.onload = () => {
+        loadedCount += 1
+        if (loadedCount === total) setImagesLoaded(true)
+      }
+    })
+
+    return () => setImagesLoaded(false)
+  }, [weapons, filteredWeapons, getWeaponIcon])
+
   return (
     <>
       <div className='mt-6'>
-        <div className='grid grid-cols-8 gap-x-4 gap-y-8'>
-          {filteredWeapons
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .map((weapon) => (
-              <WeaponCard
-                key={weapon.id}
-                weapon={weapon}
-                weaponIcon={getWeaponIcon(weapon.id)}
-                setSelectedWeapon={(weapon) => setSelectedWeapon(weapon)} />
-            ))}
-        </div>
-      </div>
+        {isLoading || !imagesLoaded ?
+          (
+            <WeaponGridSkeleton count={filteredWeapons.length || 100} />
+          ) : (
+            <div className='grid grid-cols-8 gap-x-4 gap-y-8'>
+              {
+                filteredWeapons
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((weapon) => (
+                    <WeaponCard
+                      key={weapon.id}
+                      weapon={weapon}
+                      weaponIcon={getWeaponIcon(weapon.id)}
+                      setSelectedWeapon={(weapon) => setSelectedWeapon(weapon)} />
+                  ))}
+            </div>
+          )}
+      </div >
       <WeaponModal
         open={!!selectedWeapon}
         weapon={selectedWeapon}

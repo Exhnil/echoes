@@ -1,10 +1,10 @@
-import { Skeleton } from '@/components/ui/skeleton'
+import CharacterSkeleton from './CharacterSkeleton'
 
-const CharacterGridSkeleton = () => {
+const CharacterGridSkeleton = ({ count = 8 }: { count?: number }) => {
     return (
-        <div className='grid grid-cols-8 gap-4'>
-            {Array.from({ length: 16 }).map((_, i) => (
-                <Skeleton key={i} className='h-40 w-full rounded-lg'/>
+        <div className='mt-6 grid grid-cols-8 gap-x-4 gap-y-8'>
+            {Array.from({ length: count }).map((_, i) => (
+                <CharacterSkeleton key={i} />
             ))}
         </div>
     )

@@ -15,7 +15,7 @@ const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
 
 const Inventory = () => {
-  const { items, fetchAllMaterials } = useItemStore();
+  const { items, fetchAllMaterials, isLoading } = useItemStore();
   const { characters, fetchCharacters } = useCharactersStore()
   const { weapons, fetchWeapons } = useWeaponStore()
 
@@ -88,14 +88,12 @@ const Inventory = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
       return updated
     })
-
   }
 
   const variantMap = new Map<string, string>()
   materialsGroups.forEach(group => {
     group.variants.forEach(v => variantMap.set(v, group.base))
   })
-
 
   const sortItems = (a: Item, b: Item) => {
     const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type)
@@ -143,26 +141,27 @@ const Inventory = () => {
             </Tooltip>
           </div>
           {
-            items
-              .filter(item => item.name === "Shell Credit")
-              .map((item) => {
-                const state = itemsState.find(s => s.id === item.id)
-                if (!state) return null
-                return (
-                  <div key={item.id} className="flex flex-col flex-1">
+            isLoading
+              ? (<div className="flex text-center items-center justify-center">Loading...</div>) : (items
+                .filter(item => item.name === "Shell Credit")
+                .map((item) => {
+                  const state = itemsState.find(s => s.id === item.id)
+                  if (!state) return null
+                  return (
+                    <div key={item.id} className="flex flex-col flex-1">
 
-                    <span
-                      className={`text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ${(state.owned ?? 0) >= (state.required ?? 0) ? "bg-green-400" : "bg-red-400"}`}
-                    >
-                      {state.required}
-                    </span>
-                    <input
-                      value={state.owned ?? 0}
-                      onChange={(e) => handleOwnedChange(item.id, Number(e.target.value))}
-                      className="text-center flex-1 rounded-br px-1 py-0.5 bg-zinc-700" />
-                  </div>)
-              })
-          }
+                      <span
+                        className={`text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ${(state.owned ?? 0) >= (state.required ?? 0) ? "bg-green-400" : "bg-red-400"}`}
+                      >
+                        {state.required}
+                      </span>
+                      <input
+                        value={state.owned ?? 0}
+                        onChange={(e) => handleOwnedChange(item.id, Number(e.target.value))}
+                        className="text-center flex-1 rounded-br px-1 py-0.5 bg-zinc-700" />
+                    </div>)
+                })
+              )}
         </div>
       </div>
 

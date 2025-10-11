@@ -4,8 +4,9 @@ import { useMiscStore } from "@/store/MiscStore"
 import { Star } from "lucide-react"
 import { lazy, Suspense, useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import FilterSkeleton from "../skeletons/FilterSkeleton"
 
-const WeaponGrid = lazy(()=> import("./components/WeaponGrid"))
+const WeaponGrid = lazy(() => import("./components/WeaponGrid"))
 
 const Weapons = () => {
   const { weaponsTypes, fetchWeaponsType, isLoading } = useMiscStore()
@@ -26,7 +27,10 @@ const Weapons = () => {
       <div className="mb-6">
         <span className="block font-semibold mb-2">Filter</span>
         {isLoading ? (
-          <div>Loading</div>
+          <div className="flex">
+            <FilterSkeleton size={5} />
+            <FilterSkeleton size={5} />
+          </div>
         ) : (
           <div className="flex items-center gap-6">
             <ToggleGroup
