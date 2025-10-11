@@ -1,4 +1,5 @@
-import type { Character } from '@/types'
+import type { Character, CharacterState } from '@/types'
+import { AlertCircle } from 'lucide-react';
 
 interface CharacterCardProps {
     character: Character;
@@ -8,15 +9,41 @@ interface CharacterCardProps {
 }
 
 const rarityColors: Record<number, string> = {
-  4: "from-purple-600",
-  5: "from-yellow-400",
+    4: "from-violet-600",
+    5: "from-yellow-500",
 }
 
 const getRarityColor = (rarity: number) => {
-  return rarityColors[rarity] ?? "from-transparent"
+    return rarityColors[rarity] ?? "from-transparent"
 }
 
+//Changer la couleur pour de bas vers haut, en vers tranparent ou zinc
 const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCharacter }: CharacterCardProps) => {
+
+    const hasObjective = () => {
+        const saved = localStorage.getItem("characterState")
+        const parsed: Record<string, CharacterState> = saved ? JSON.parse(saved) : {}
+
+        const characterState = parsed[character.id]
+        if (!characterState) return false
+
+        const level = characterState.level
+        if (level.currentAscensionLevel !== level.targetAscensionLevel || level.currentLevel !== level.targetLevel) {
+            return true
+        }
+
+        for (const skillId in characterState.skills) {
+            const skill = characterState.skills[skillId]
+            if (skill.currentSkillLevel !== skill.targetSkillLevel) return true
+        }
+
+        if (characterState.bonusStats.some(b => b.state === "planned")) return true
+
+        if (characterState.inherentSkills.some(s => s.state === "planned")) return true
+
+        return false
+    }
+
     return (
         <div
             className='flex flex-col items-center cursor-pointer'
@@ -32,6 +59,15 @@ const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCha
                         className='w-5 h-5'
                     />
                 </div>
+                {
+                    hasObjective() && (
+                        <div
+                            className='absolute top-1 left-1 w-6 h-6 bg-amber-600/90 rounded-full flex items-center justify-center shadow-md border-white'>
+                            <AlertCircle
+                                className='w-4 h-4 text-zinc-300' />
+                        </div>
+                    )
+                }
                 <div className='text-center font-medium'>{character.name}</div>
             </div>
         </div>

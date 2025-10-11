@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button";
 import { materialsGroups, typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
-import { getCraftableAmount } from "@/lib/crafting";
+import { craftItem, getCraftableAmount } from "@/lib/crafting";
 
 const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
@@ -76,22 +76,7 @@ const Inventory = () => {
   }, [characters, itemsState.length, weapons])
 
   const handleCraft = (itemId: string) => {
-    const item = items.find(i => i.id === itemId)
-    if (!item) return
-
-    const source = items.find(i => i.group === item.group && i.rarity === item.rarity - 1);
-    if (!source) return
-
-    const sourceState = itemsState.find(s => s.id === source.id)
-    if (!sourceState || sourceState.owned < 3) return
-
-    setItemsState(prev =>
-      prev.map(s => {
-        if (s.id === source.id) return { ...s, owned: s.owned - 3 }
-        if (s.id === item.id) return { ...s, owned: s.owned + 1 }
-        return s
-      })
-    )
+    setItemsState(prev => craftItem(itemId, prev, items))
   }
 
   const handleOwnedChange = (id: string, value: number) => {
