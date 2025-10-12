@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { axiosInstance } from '@/lib/axios';
+import { calculateLevels } from '@/lib/calculateMaterials';
 import { completeWeaponLevel } from '@/lib/completion';
 import { updateWeaponLevel } from '@/lib/statesUpdate';
 import LevelSelector from '@/pages/characters/components/LevelSelector';
@@ -81,6 +82,20 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
     })
   }
 
+  const canCompleteLevel = (weapon: Weapon, state: WeaponState) => {
+    const needed = calculateLevels(weapon, state)
+    const saved = localStorage.getItem("inventoryState")
+    const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+    for (const [name, mat] of Object.entries(needed)) {
+      const item = inventory.find(i => i.name === name)
+      if (!item || item.owned < mat.value) return false
+    }
+    return true
+  }
+
+  const levelReady = weapon && weaponState[weapon.id] ? canCompleteLevel(weapon, weaponState[weapon.id]) : false
+
+
   if (!weapon) return null
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -118,7 +133,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
           <div className='flex justify-end'>
             <Button
               onClick={completeLeveling}
-              className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+              className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-400' : 'bg-orange-400'}`}>
               <Check className='w-4 h-4 mr-2' />
               Done
             </Button>

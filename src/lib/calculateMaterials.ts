@@ -1,4 +1,84 @@
-import type { Character, CharacterState, Material, Weapon, WeaponState } from "@/types";
+import type {
+  Character,
+  CharacterState,
+  Material,
+  Weapon,
+  WeaponState,
+} from "@/types";
+
+export const calculateLevels = (
+  reference: Character | Weapon,
+  state: WeaponState | CharacterState
+) => {
+  const totalMats: Record<string, Material> = {};
+  const addMats = (materials: Material[]) => {
+    for (const { name, value } of materials) {
+      totalMats[name] ??= { name, value: 0 };
+      totalMats[name].value += value;
+    }
+  };
+
+  const {
+    currentAscensionLevel: currentAscensionLevel,
+    targetAscensionLevel: targetAscensionLevel,
+  } = state.level;
+
+  for (const [levelString, materials] of Object.entries(
+    reference.ascension_materials
+  )) {
+    const level = Number(levelString);
+    if (level > currentAscensionLevel && level <= targetAscensionLevel) {
+      addMats(materials);
+    }
+  }
+
+  return totalMats;
+};
+
+export const calculateTalents = (
+  character: Character,
+  state: CharacterState
+) => {
+  const totalMats: Record<string, Material> = {};
+  const addMats = (materials: Material[]) => {
+    for (const { name, value } of materials) {
+      totalMats[name] ??= { name, value: 0 };
+      totalMats[name].value += value;
+    }
+  };
+
+  for (const [levelString, materials] of Object.entries(
+    character.skill_materials
+  )) {
+    const level = Number(levelString);
+    const skillStepNumber = Object.values(state.skills).filter(
+      (skill) =>
+        level > skill.currentSkillLevel && level <= skill.targetSkillLevel
+    ).length;
+
+    if (skillStepNumber > 0) {
+      addMats(
+        materials.map((material) => ({
+          name: material.name,
+          value: material.value * skillStepNumber,
+        }))
+      );
+    }
+  }
+
+  for (const bonus of state.bonusStats ?? []) {
+    if (bonus.state !== "planned") continue;
+    const mats = character.stats_bonus_materials?.[`rank_${bonus.rank}`];
+    if (mats) addMats(mats);
+  }
+
+  for (const inherent of state.inherentSkills ?? []) {
+    if (inherent.state !== "planned") continue;
+    const mats = character.inherent_skill_materials?.[`rank_${inherent.rank}`];
+    if (mats) addMats(mats);
+  }
+  return totalMats;
+};
 
 export const calculate = (
   characters: Character[],
@@ -78,12 +158,12 @@ export const calculate = (
       targetAscensionLevel: targetAscensionLevel,
     } = state.level;
 
-    for(const [levelString,materials]of Object.entries(
+    for (const [levelString, materials] of Object.entries(
       weapon.ascension_materials
-    )){
+    )) {
       const level = Number(levelString);
-      if(level>currentAscensionLevel&&level <= targetAscensionLevel){
-        addMats(materials)
+      if (level > currentAscensionLevel && level <= targetAscensionLevel) {
+        addMats(materials);
       }
     }
   }

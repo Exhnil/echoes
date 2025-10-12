@@ -11,6 +11,7 @@ import SkillLevelInput from './SkillLevelInput'
 import LevelSelector from './LevelSelector'
 import { Button } from '@/components/ui/button'
 import { completeCharacterLevel, completeCharacterSkills, completeCharacterTalents } from '@/lib/completion'
+import { calculateLevels, calculateTalents } from '@/lib/calculateMaterials'
 
 interface CharacterModalProps {
     character: Character | null
@@ -197,6 +198,30 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         })
     }
 
+    const canCompleteLevel = (character: Character, state: CharacterState) => {
+        const needed = calculateLevels(character, state)
+        const saved = localStorage.getItem("inventoryState")
+        const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+        for (const [name, mat] of Object.entries(needed)) {
+            const item = inventory.find(i => i.name === name)
+            if (!item || item.owned < mat.value) return false
+        }
+        return true
+    }
+
+    const canCompleteTalents = (character: Character, state: CharacterState) => {
+        const needed = calculateTalents(character, state)
+        const saved = localStorage.getItem("inventoryState")
+        const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+        for (const [name, mat] of Object.entries(needed)) {
+            const item = inventory.find(i => i.name === name)
+            if (!item || item.owned < mat.value) return false
+        } return true
+    }
+
+    const levelReady = character && characterState[character.id] ? canCompleteLevel(character, characterState[character.id]) : false
+    const talentsReady = character && characterState[character.id] ? canCompleteTalents(character, characterState[character.id]) : false
+
     if (!character) return null
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -256,7 +281,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                             <div className='flex justify-end'>
                                 <Button
                                     onClick={completeLeveling}
-                                    className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+                                    className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-500' : 'bg-red-500'}`}>
                                     <Check className='w-4 h-4 mr-2' />
                                     Done
                                 </Button>
@@ -343,7 +368,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                             <div className='flex justify-center mt-5'>
                                                 <Button
                                                     onClick={() => { completeTalents(); completeSkills() }}
-                                                    className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+                                                    className={`font-semibold px-6 py-2 rounded-lg shadow-md ${talentsReady ? 'bg-green-400' : 'bg-orange-400'}`}>
                                                     <Check className='w-4 h-4 mr-2' />
                                                     Done
                                                 </Button>
