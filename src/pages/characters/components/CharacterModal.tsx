@@ -4,12 +4,13 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { axiosInstance } from '@/lib/axios'
 import { updateCharacterLevel, updateSkillLevel } from '@/lib/statesUpdate'
 import { ranks, skillNames } from '@/lib/constants'
-import type { BonusStat, Character, CharacterState, InherentSkill, SkillState, UnlockState } from '@/types'
+import type { BonusStat, Character, CharacterState, InherentSkill, ItemState, SkillState, UnlockState } from '@/types'
 import { Check, ChevronRight, Flag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SkillLevelInput from './SkillLevelInput'
 import LevelSelector from './LevelSelector'
 import { Button } from '@/components/ui/button'
+import { completeCharacterLevel, completeCharacterSkills, completeCharacterTalents } from '@/lib/completion'
 
 interface CharacterModalProps {
     character: Character | null
@@ -142,6 +143,60 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         })
     }
 
+    const completeLeveling = () => {
+        if (!character) return
+        const state = characterState[character.id]
+        if (!state) return
+        const saved = localStorage.getItem("inventoryState")
+        const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+
+        const result = completeCharacterLevel(state, inventory, character)
+
+        localStorage.setItem("inventoryState", JSON.stringify(result))
+        setCharacterState(prev => {
+            const updated = { ...prev }
+            updated[character.id] = state
+            localStorage.setItem("characterState", JSON.stringify(updated))
+            return updated
+        })
+    }
+
+    const completeTalents = () => {
+        if (!character) return
+        const state = characterState[character.id]
+        if (!state) return
+        const saved = localStorage.getItem("inventoryState")
+        const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+
+        const result = completeCharacterTalents(state, inventory, character)
+
+        localStorage.setItem("inventoryState", JSON.stringify(result))
+        setCharacterState(prev => {
+            const updated = { ...prev }
+            updated[character.id] = state
+            localStorage.setItem("characterState", JSON.stringify(updated))
+            return updated
+        })
+    }
+
+    const completeSkills = () => {
+        if (!character) return
+        const state = characterState[character.id]
+        if (!state) return
+        const saved = localStorage.getItem("inventoryState")
+        const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+
+        const result = completeCharacterSkills(state, inventory, character)
+
+        localStorage.setItem("inventoryState", JSON.stringify(result))
+        setCharacterState(prev => {
+            const updated = { ...prev }
+            updated[character.id] = state
+            localStorage.setItem("characterState", JSON.stringify(updated))
+            return updated
+        })
+    }
+
     if (!character) return null
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -197,6 +252,14 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                     onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
                                     minValue={characterState[character.id]?.level.currentLevel ?? 1}
                                 />
+                            </div>
+                            <div className='flex justify-end'>
+                                <Button
+                                    onClick={completeLeveling}
+                                    className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+                                    <Check className='w-4 h-4 mr-2' />
+                                    Done
+                                </Button>
                             </div>
                         </TabsContent>
                         <TabsContent value='forte' className='space-y-4'>
@@ -276,6 +339,14 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                                         </ToggleGroupItem>
                                                     </ToggleGroup>
                                                 ))}
+                                            </div>
+                                            <div className='flex justify-center mt-5'>
+                                                <Button
+                                                    onClick={() => { completeTalents(); completeSkills() }}
+                                                    className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+                                                    <Check className='w-4 h-4 mr-2' />
+                                                    Done
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>

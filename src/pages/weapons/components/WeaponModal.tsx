@@ -1,9 +1,11 @@
+import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { axiosInstance } from '@/lib/axios';
+import { completeWeaponLevel } from '@/lib/completion';
 import { updateWeaponLevel } from '@/lib/statesUpdate';
 import LevelSelector from '@/pages/characters/components/LevelSelector';
-import type { Weapon, WeaponState } from '@/types'
-import { ChevronRight } from 'lucide-react';
+import type { ItemState, Weapon, WeaponState } from '@/types'
+import { Check, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react'
 
 interface WeaponModalProps {
@@ -61,6 +63,24 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
     })
   }
 
+  const completeLeveling = () => {
+    if (!weapon) return
+    const state = weaponState[weapon.id]
+    if (!state) return
+    const saved = localStorage.getItem("inventoryState")
+    const inventory: ItemState[] = saved ? JSON.parse(saved) : []
+
+    const result = completeWeaponLevel(state, inventory, weapon)
+
+    localStorage.setItem("inventoryState", JSON.stringify(result))
+    setWeaponState(prev => {
+      const updated = { ...prev }
+      updated[weapon.id] = state
+      localStorage.setItem("weaponState", JSON.stringify(updated))
+      return updated
+    })
+  }
+
   if (!weapon) return null
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -94,6 +114,14 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
               level={weaponState[weapon.id]?.level.targetLevel}
               onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
               minValue={weaponState[weapon.id]?.level.currentAscensionLevel} />
+          </div>
+          <div className='flex justify-end'>
+            <Button
+              onClick={completeLeveling}
+              className='bg-green-600 hover:bg-green-500 font-semibold px-6 py-2 rounded-lg shadow-md'>
+              <Check className='w-4 h-4 mr-2' />
+              Done
+            </Button>
           </div>
         </div>
       </DialogContent>
