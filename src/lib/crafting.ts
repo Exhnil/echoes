@@ -15,6 +15,8 @@ export const getCraftableAmount = (
   const target = allItems.find((i) => i.id === targetId);
   if (!target) return 0;
 
+  if (!target.group || target.group === "none") return 0;
+
   const sameGroup = allItems.filter((i) => i.group === target.group);
   if (sameGroup.length === 0) return 0;
 
