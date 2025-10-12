@@ -281,7 +281,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                             <div className='flex justify-end'>
                                 <Button
                                     onClick={completeLeveling}
-                                    className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-500' : 'bg-red-500'}`}>
+                                    className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-500' : 'bg-orange-400'}`}>
                                     <Check className='w-4 h-4 mr-2' />
                                     Done
                                 </Button>
