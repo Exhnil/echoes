@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { axiosInstance } from '@/lib/axios'
-import { updateCharacterLevel, updateSkillLevel } from '@/lib/statesUpdate'
+import { updateLevelState, updateSkillLevel, updateTalentsState } from '@/lib/state'
 import { ranks, skillNames } from '@/lib/constants'
 import type { BonusStat, Character, CharacterState, InherentSkill, ItemState, SkillState, UnlockState } from '@/types'
 import { Check, ChevronRight, Flag } from 'lucide-react'
@@ -70,7 +70,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         if (!character) return
 
         setCharacterState(prev => {
-            const updated = updateCharacterLevel(prev, character.id, currentOrTarget, lvl, ascension)
+            const updated = updateLevelState(prev, character.id, currentOrTarget, lvl, ascension)
             const char = updated?.[character.id]
 
             if (!char) return prev
@@ -104,18 +104,8 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         if (!character) return
 
         setCharacterState(prev => {
-            const updated = { ...prev }
-            const char = updated[character.id]
-
-            if (!char) return prev
-
-            const list = char[type]
-            const index = list.findIndex(i => i.id === id)
-            if (index >= 0) {
-                list[index] = { ...list[index], state: newState }
-                localStorage.setItem("characterState", JSON.stringify(updated))
-            }
-
+            const updated = updateTalentsState(prev, character.id, id, type, newState)
+            localStorage.setItem("characterState", JSON.stringify(updated))
             return updated
         })
     }

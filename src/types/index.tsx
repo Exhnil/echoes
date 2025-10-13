@@ -37,13 +37,13 @@ interface InherentSkillMaterials {
 
 export interface CharacterState {
     id: string;
-    level: levelState
+    level: LevelState
     skills: Record<string, SkillState>
     bonusStats: BonusStat[]
     inherentSkills: InherentSkill[]
 }
 
-interface levelState {
+export interface LevelState {
     currentAscensionLevel: number;
     targetAscensionLevel: number
     currentLevel: number;
@@ -80,7 +80,7 @@ export interface Weapon {
 
 export interface WeaponState {
     id: string;
-    level: levelState
+    level: LevelState
 }
 
 export interface Item {

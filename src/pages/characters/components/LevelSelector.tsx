@@ -30,12 +30,14 @@ const LEVEL_BUTTONS: { level: number; asc: number; label: string, isTier?: boole
 
 const LevelSelector = ({ ascension, level, onSelect, minValue = 1 }: LevelSelectorProps) => {
     const [open, setOpen] = useState(false)
+    const btn = LEVEL_BUTTONS.find(btn => btn.level === level && btn.asc === ascension)
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" size="lg" className="w-20">
-                    {LEVEL_BUTTONS.find(btn => btn.level === level && btn.asc === ascension)?.label ?? level}
+                    {btn?.label ?? level}
+                    {btn?.isTier && <ChevronUp className="w-3 h-3 text-yellow-400" />}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-64 bg-zinc-800">

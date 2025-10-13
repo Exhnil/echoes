@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { axiosInstance } from '@/lib/axios';
 import { calculateLevels } from '@/lib/calculateMaterials';
 import { completeWeaponLevel } from '@/lib/completion';
-import { updateWeaponLevel } from '@/lib/statesUpdate';
+import { updateLevelState } from '@/lib/state';
 import LevelSelector from '@/pages/characters/components/LevelSelector';
 import type { ItemState, Weapon, WeaponState } from '@/types'
 import { Check, ChevronRight } from 'lucide-react';
@@ -44,7 +44,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
     if (!weapon) return
 
     setWeaponState(prev => {
-      const updated = updateWeaponLevel(prev, weapon.id, currentOrTarget, lvl, ascension)
+      const updated = updateLevelState(prev, weapon.id, currentOrTarget, lvl, ascension)
       const weap = updated?.[weapon.id]
 
       if (!weap) return prev
@@ -95,7 +95,6 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
 
   const levelReady = weapon && weaponState[weapon.id] ? canCompleteLevel(weapon, weaponState[weapon.id]) : false
 
-
   if (!weapon) return null
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -128,7 +127,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
               ascension={weaponState[weapon.id]?.level.targetAscensionLevel}
               level={weaponState[weapon.id]?.level.targetLevel}
               onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
-              minValue={weaponState[weapon.id]?.level.currentAscensionLevel} />
+              minValue={weaponState[weapon.id]?.level.currentAscensionLevel ?? 1} />
           </div>
           <div className='flex justify-end'>
             <Button
