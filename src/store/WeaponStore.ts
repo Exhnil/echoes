@@ -3,7 +3,6 @@ import type { Weapon } from "@/types";
 import { create } from "zustand";
 
 interface WeaponStore {
-  weaponsList: string[];
   weapons: Weapon[];
 
   isLoading: boolean;
@@ -13,26 +12,25 @@ interface WeaponStore {
 }
 
 export const useWeaponStore = create<WeaponStore>((set) => ({
-  weaponsList: [],
   weapons: [],
   isLoading: false,
   error: null,
 
   fetchWeapons: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/weapons/all");
       set({ weapons: response.data });
     } catch (error: unknown) {
-      let errorMessage = "An unknown error occurred";
-      if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      set({ error: errorMessage });
+      set({ error: parseError(error) });
     } finally {
       set({ isLoading: false });
     }
   },
 }));
+
+const parseError = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+  return "An unknown error occurred";
+};

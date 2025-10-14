@@ -20,7 +20,7 @@ export const useItemStore = create<ItemStore>((set) => ({
   error: null,
 
   fetchItemsList: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/materials");
       set({ itemsList: response.data });
@@ -38,20 +38,20 @@ export const useItemStore = create<ItemStore>((set) => ({
   },
   fetchMaterial: async () => {},
   fetchAllMaterials: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/materials/all");
       set({ items: response.data });
     } catch (error: unknown) {
-      let errorMessage = "An unknown error occurred";
-      if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      set({ error: errorMessage });
+      set({ error: parseError(error) });
     } finally {
       set({ isLoading: false });
     }
   },
 }));
+
+const parseError = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+  return "An unknown error occurred";
+};

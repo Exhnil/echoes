@@ -23,7 +23,7 @@ export const useMiscStore = create<MiscStore>((set) => ({
   error: null,
 
   fetchNations: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
       set({ nations: response.data.nations });
@@ -34,7 +34,7 @@ export const useMiscStore = create<MiscStore>((set) => ({
     }
   },
   fetchAttributes: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
       set({ attributes: response.data.attributes });
@@ -45,14 +45,20 @@ export const useMiscStore = create<MiscStore>((set) => ({
     }
   },
   fetchWeaponsType: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
       set({ weaponsTypes: response.data.weapons });
     } catch (error: any) {
-      set({ error: error.response.data.message });
+      set({ error: parseError(error) });
     } finally {
       set({ isLoading: false });
     }
   },
 }));
+
+const parseError = (error: unknown): string => {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) return error.message;
+  return "An unknown error occurred";
+};
