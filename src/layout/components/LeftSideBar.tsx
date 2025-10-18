@@ -15,9 +15,12 @@ const LeftSideBar = () => {
 
     return (
         <div className="bg-zinc-800 h-screen flex flex-col p-4">
-            <div className="mb-8 text-center">
-                <Link to="/" className="text-3xl font-bold block">
-                    Echoes
+            <div className="mb-2 text-center">
+                <Link to="/" className="block">
+                    <img
+                    src="/echoes.png"
+                    alt="Echoes"
+                    className="mx-auto w-auto h-24 object-contain"/>
                 </Link>
             </div>
             <div className="flex flex-col gap-4">
