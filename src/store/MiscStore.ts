@@ -15,7 +15,7 @@ interface MiscStore {
   fetchWeaponsType: () => Promise<void>;
 }
 
-export const useMiscStore = create<MiscStore>((set) => ({
+export const useMiscStore = create<MiscStore>((set, get) => ({
   nations: [],
   attributes: [],
   weaponsTypes: [],
@@ -23,6 +23,7 @@ export const useMiscStore = create<MiscStore>((set) => ({
   error: null,
 
   fetchNations: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
@@ -34,6 +35,7 @@ export const useMiscStore = create<MiscStore>((set) => ({
     }
   },
   fetchAttributes: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
@@ -45,6 +47,7 @@ export const useMiscStore = create<MiscStore>((set) => ({
     }
   },
   fetchWeaponsType: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");

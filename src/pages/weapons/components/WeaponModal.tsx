@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import ConfirmDialog from '@/layout/components/ConfirmDialog';
 import { axiosInstance } from '@/lib/axios';
 import { calculateLevels } from '@/lib/calculateMaterials';
 import { completeWeaponLevel } from '@/lib/completion';
@@ -139,12 +140,15 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
               minValue={weaponState[weapon.id]?.level.currentAscensionLevel ?? 1} />
           </div>
           <div className='flex justify-end'>
-            <Button
-              onClick={completeLeveling}
-              className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-600' : 'bg-orange-400'}`}>
-              <Check className='w-4 h-4 mr-2' />
-              Done
-            </Button>
+            <ConfirmDialog
+              title="Finish Character"
+              description="Materials will be consumed"
+              onConfirm={() => completeLeveling()}
+              trigger={<Button
+                className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-600' : 'bg-orange-400'}`}>
+                <Check className='w-4 h-4 mr-2' />
+                Done
+              </Button>} />
           </div>
         </div>
       </DialogContent>

@@ -15,6 +15,31 @@ const Characters = () => {
   const [selectedAttribute, setSelectedAttribute] = useState<string>("")
   const [selectedWeapon, setSelectedWeapon] = useState<string>("")
 
+  const [init, setInit] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem("characterFilters")
+    if (saved) {
+      const { rarity, attribute, weapon } = JSON.parse(saved)
+      setSelectedAttribute(attribute || "")
+      setSelectedRarity(rarity || "")
+      setSelectedWeapon(weapon || "")
+    }
+    setInit(true)
+  }, [])
+
+  useEffect(() => {
+    if(!init) return
+    localStorage.setItem(
+      "characterFilters",
+      JSON.stringify({
+        rarity: selectedRarity,
+        attribute: selectedAttribute,
+        weapon: selectedWeapon,
+      })
+    )
+  }, [selectedRarity, selectedAttribute, selectedWeapon, init])
+
   useEffect(() => {
     fetchAttributes();
     fetchWeaponsType();

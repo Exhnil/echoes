@@ -13,13 +13,14 @@ interface ItemStore {
   fetchAllMaterials: () => Promise<void>;
 }
 
-export const useItemStore = create<ItemStore>((set) => ({
+export const useItemStore = create<ItemStore>((set, get) => ({
   items: [],
   itemsList: [],
   isLoading: false,
   error: null,
 
   fetchItemsList: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/materials");

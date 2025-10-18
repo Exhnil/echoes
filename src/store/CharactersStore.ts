@@ -11,12 +11,13 @@ interface CharacterStore {
   fetchCharacters: () => Promise<void>;
 }
 
-export const useCharactersStore = create<CharacterStore>((set) => ({
+export const useCharactersStore = create<CharacterStore>((set, get) => ({
   characters: [],
   isLoading: false,
   error: null,
 
   fetchCharacters: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/characters/all");

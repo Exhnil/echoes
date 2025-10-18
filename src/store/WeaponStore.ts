@@ -11,12 +11,13 @@ interface WeaponStore {
   fetchWeapons: () => Promise<void>;
 }
 
-export const useWeaponStore = create<WeaponStore>((set) => ({
+export const useWeaponStore = create<WeaponStore>((set, get) => ({
   weapons: [],
   isLoading: false,
   error: null,
 
   fetchWeapons: async () => {
+    if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/weapons/all");
