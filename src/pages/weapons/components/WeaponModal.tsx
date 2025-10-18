@@ -6,7 +6,7 @@ import { completeWeaponLevel } from '@/lib/completion';
 import { updateLevelState } from '@/lib/state';
 import LevelSelector from '@/pages/characters/components/LevelSelector';
 import type { ItemState, Weapon, WeaponState } from '@/types'
-import { Check, ChevronRight } from 'lucide-react';
+import { Check, ChevronRight, Save } from 'lucide-react';
 import { useEffect, useState } from 'react'
 
 interface WeaponModalProps {
@@ -112,6 +112,15 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
           <DialogTitle className='text-2xl font-bold'>
             {weapon.name}
           </DialogTitle>
+          <Button
+            variant='secondary'
+            size="sm"
+            onClick={onClose}
+            className='bg-green-600 hover:bg-green-500 text-white font-semibold px-3'
+          >
+            <Save className='w-4 h-4 mr-1' />
+            Save
+          </Button>
         </DialogHeader>
         <div className='p-2 space-y-4'>
           <div className='bg-zinc-800 text-center p-2 rounded-md font-medium'>
@@ -132,7 +141,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
           <div className='flex justify-end'>
             <Button
               onClick={completeLeveling}
-              className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-400' : 'bg-orange-400'}`}>
+              className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-600' : 'bg-orange-400'}`}>
               <Check className='w-4 h-4 mr-2' />
               Done
             </Button>

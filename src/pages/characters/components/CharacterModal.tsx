@@ -5,13 +5,14 @@ import { axiosInstance } from '@/lib/axios'
 import { updateLevelState, updateSkillLevel, updateTalentsState } from '@/lib/state'
 import { ranks, skillNames } from '@/lib/constants'
 import type { BonusStat, Character, CharacterState, InherentSkill, ItemState, SkillState, UnlockState } from '@/types'
-import { Check, ChevronRight, Flag } from 'lucide-react'
+import { Check, ChevronRight, Flag, Save } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import SkillLevelInput from './SkillLevelInput'
 import LevelSelector from './LevelSelector'
 import { Button } from '@/components/ui/button'
 import { completeCharacterLevel, completeCharacterSkills, completeCharacterTalents } from '@/lib/completion'
 import { calculateLevels, calculateTalents } from '@/lib/calculateMaterials'
+import ConfirmDialog from '@/layout/components/ConfirmDialog'
 
 interface CharacterModalProps {
     character: Character | null
@@ -227,13 +228,26 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                     <DialogTitle className='text-2xl font-bold'>
                         {character.name}
                     </DialogTitle>
-                    <div>
+                    <div className='flex gap-2'>
                         <Button
-                            variant='destructive'
-                            size='sm'
-                            onClick={() => resetCharacter(character.id)}
-                        >Reset
+                            variant='secondary'
+                            size="sm"
+                            onClick={onClose}
+                            className='bg-green-600 hover:bg-green-500 text-white font-semibold px-3'
+                        >
+                            <Save className='w-4 h-4 mr-1' />
+                            Save
                         </Button>
+                        <ConfirmDialog
+                            title="Reset character"
+                            description="All progress will be reset"
+                            onConfirm={() => resetCharacter(character.id)}
+                            trigger={<Button
+                                variant='secondary'
+                                size='sm'
+                                className='px-3 bg-red-700 hover:bg-red-600 font-semibold'
+                            >Reset
+                            </Button>} />
                     </div>
                 </DialogHeader>
                 <div className='p-2'>
@@ -269,12 +283,15 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                                 />
                             </div>
                             <div className='flex justify-end'>
-                                <Button
-                                    onClick={completeLeveling}
-                                    className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-500' : 'bg-orange-400'}`}>
-                                    <Check className='w-4 h-4 mr-2' />
-                                    Done
-                                </Button>
+                                <ConfirmDialog
+                                    title="Finish Character"
+                                    description="Materials will be consumed"
+                                    onConfirm={() => completeLeveling()}
+                                    trigger={<Button
+                                        className={`font-semibold px-6 py-2 rounded-lg shadow-md ${levelReady ? 'bg-green-600' : 'bg-orange-400'}`}>
+                                        <Check className='w-4 h-4 mr-2' />
+                                        Done
+                                    </Button>} />
                             </div>
                         </TabsContent>
                         <TabsContent value='forte' className='space-y-4'>
