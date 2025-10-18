@@ -10,7 +10,6 @@ interface LevelSelectorProps {
     minValue?: number
 }
 
-
 const LEVEL_BUTTONS: { level: number; asc: number; label: string, isTier?: boolean }[] = [
     { level: 1, asc: 0, label: '1' },
     { level: 20, asc: 0, label: '20' },
@@ -58,7 +57,6 @@ const LevelSelector = ({ ascension, level, onSelect, minValue = 1 }: LevelSelect
                             >
                                 {btn.label}
                                 {btn.isTier && <ChevronUp className="w-3 h-3 text-yellow-400" />}
-
                             </Button>
                         )
                     })}

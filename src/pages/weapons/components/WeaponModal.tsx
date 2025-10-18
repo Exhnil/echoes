@@ -137,7 +137,7 @@ const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
               ascension={weaponState[weapon.id]?.level.targetAscensionLevel}
               level={weaponState[weapon.id]?.level.targetLevel}
               onSelect={(lvl, ascension) => updateLevel("target", lvl, ascension)}
-              minValue={weaponState[weapon.id]?.level.currentAscensionLevel ?? 1} />
+              minValue={weaponState[weapon.id]?.level.currentLevel ?? 1} />
           </div>
           <div className='flex justify-end'>
             <ConfirmDialog

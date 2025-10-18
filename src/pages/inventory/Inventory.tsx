@@ -22,6 +22,27 @@ const Inventory = () => {
   const [itemsState, setItemsState] = useState<ItemState[]>([]);
   const [showOnlyRequired, setShowOnlyRequired] = useState(false)
 
+  const [init, setInit] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem("inventoryFilters")
+    if (saved) {
+      const { required } = JSON.parse(saved)
+      setShowOnlyRequired(required || "")
+    }
+    setInit(true)
+  }, [])
+
+  useEffect(() => {
+    if (!init) return
+    localStorage.setItem(
+      "inventoryFilters",
+      JSON.stringify({
+        required: showOnlyRequired
+      })
+    )
+  }, [showOnlyRequired, init])
+
   useEffect(() => {
     const loadData = async () => {
       await Promise.all([fetchAllMaterials(), fetchCharacters(), fetchWeapons()])
@@ -31,14 +52,11 @@ const Inventory = () => {
 
   useEffect(() => {
     if (!items.length) {
-      //console.log("[Inventory] items empty, skipping init");
       return
     }
     const savedJson = localStorage.getItem(STORAGE_KEY);
-    // console.log("[Inventory] raw localStorage:", savedJson);
 
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
-    //console.log("[Inventory] parsed items:", savedItems);
     setItemsState(savedItems);
 
     const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
