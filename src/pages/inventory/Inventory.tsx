@@ -94,7 +94,11 @@ const Inventory = () => {
   }, [characters, itemsState.length, weapons])
 
   const handleCraft = (itemId: string) => {
-    setItemsState(prev => craftItem(itemId, prev, items))
+    setItemsState((prev) => {
+      const updated = craftItem(itemId, prev, items)
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+      return updated
+    })
   }
 
   const handleOwnedChange = (id: string, value: number) => {
