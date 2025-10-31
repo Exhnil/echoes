@@ -14,13 +14,13 @@ const LeftSideBar = () => {
     ]
 
     return (
-        <div className="bg-zinc-800 h-screen flex flex-col p-4">
+        <div className="bg-zinc-800 h-screen flex flex-col p-4 shadow-[4px_0_6px_-2px_rgba(0,0,0,0.5)]">
             <div className="mb-2 text-center">
                 <Link to="/" className="block">
                     <img
-                    src="/echoes.png"
-                    alt="Echoes"
-                    className="mx-auto w-auto h-24 object-contain"/>
+                        src="/echoes.png"
+                        alt="Echoes"
+                        className="mx-auto w-auto h-24 object-contain" />
                 </Link>
             </div>
             <div className="flex flex-col gap-4">
@@ -30,14 +30,17 @@ const LeftSideBar = () => {
                         <Link
                             key={item.name}
                             to={item.href}
-                            className={`mx-6 flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-zinc-700 text-zinc-300 transition-colors duration-200
-                                ${isActive ? "bg-zinc-900 text-white" : "hover:bg-zinc-700/50 hover:text-zinc-300"}`}>
+                            className={`relative flex items-center gap-2 px-2 py-2 rounded-none text-zinc-300 transition-colors duration-200
+                                ${isActive ? "bg-iron-900 text-white" : "hover:bg-zinc-700/50 text-zinc-300"}`}>
                             <img
                                 src={menuIcons[item.name]}
                                 alt={item.name}
-                                className="w-10 h-10"
+                                className="w-8 h-8 sm:h-10 sm:w-10"
                             />
-                            <span className="">{item.name}</span>
+                            <span className="hidden sm:inline">{item.name}</span>
+                            {isActive && (
+                                <div className="absolute right-0 top-0 h-full w-[4px] bg-equator-700" />
+                            )}
                         </Link>
                     )
                 })}

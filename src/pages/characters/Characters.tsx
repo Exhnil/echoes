@@ -29,7 +29,7 @@ const Characters = () => {
   }, [])
 
   useEffect(() => {
-    if(!init) return
+    if (!init) return
     localStorage.setItem(
       "characterFilters",
       JSON.stringify({
@@ -54,16 +54,16 @@ const Characters = () => {
       <div className='mb-6'>
         <span className='block font-semibold mb-2'>Filter</span>
         {isLoading ? (
-          <div className="flex">
+          <div className="flex gap-4">
             <FilterSkeleton size={2} />
             <FilterSkeleton size={6} />
             <FilterSkeleton size={5} />
           </div>
         ) : (
-          <div className='flex items-center gap-6'>
+          <div className='relative inline-flex gap-4 p-2 rounded-s bg-gradient-to-r from-equator-500 to-transparent'>
             <ToggleGroup
               type='single'
-              className='flex bg-zinc-800'
+              className='flex bg-iron-900'
               value={selectedRarity}
               onValueChange={setSelectedRarity}>
               <ToggleGroupItem value='4' className='px-3 py-1 border hover:bg-zinc-700 cursor-pointer'>
@@ -76,7 +76,7 @@ const Characters = () => {
 
             <ToggleGroup
               type='single'
-              className='flex bg-zinc-800'
+              className='flex bg-iron-900'
               value={selectedAttribute}
               onValueChange={setSelectedAttribute}>
               {attributes.map((attribute) => (
@@ -110,7 +110,7 @@ const Characters = () => {
 
             <ToggleGroup
               type='single'
-              className="flex bg-zinc-800"
+              className="flex bg-iron-900"
               value={selectedWeapon}
               onValueChange={setSelectedWeapon}>
               {weaponsTypes.map((weapon) => (
@@ -136,6 +136,9 @@ const Characters = () => {
         )}
 
       </div>
+
+      <div className='my-4 h-1 w-full bg-iron-700' />
+
       <Suspense>
         <CharactersGrid
           rarity={selectedRarity}

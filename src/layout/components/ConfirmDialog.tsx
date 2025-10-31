@@ -12,7 +12,7 @@ const ConfirmDialog = ({ trigger, title, description, onConfirm }: ConfirmDialog
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
-            <AlertDialogContent className='bg-zinc-900 text-white border-zinc-700'>
+            <AlertDialogContent className='bg-iron-900 text-white border-zinc-700'>
                 <AlertDialogHeader>
                     <AlertDialogTitle>{title}</AlertDialogTitle>
                     {description && (

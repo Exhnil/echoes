@@ -9,8 +9,8 @@ interface CharacterCardProps {
 }
 
 const rarityColors: Record<number, string> = {
-    4: "from-violet-600",
-    5: "from-yellow-500",
+    4: "bg-violet-600",
+    5: "bg-equator-700",
 }
 
 const getRarityColor = (rarity: number) => {
@@ -48,27 +48,32 @@ const CharacterCard = ({ character, characterIcon, attributeIcon, setSelectedCha
         <div
             className='flex flex-col items-center cursor-pointer'
             onClick={() => setSelectedCharacter(character)}>
-            <div className={`relative bg-gradient-to-b rounded-xl justify-between items-center ${getRarityColor(character.rarity)} to-zinc-800`}>
-                <img
-                    src={characterIcon}
-                    alt={character.name}
-                    className='object-contain' />
-                <div className='absolute top-1 right-1 w-7 h-7 rounded-full bg-zinc-900/80 flex items-center justify-center shadow-md'>
+            <div className={`relative rounded-none justify-between items-center bg-iron-900`}>
+                <div className='relative'>
                     <img
-                        src={attributeIcon}
-                        className='w-5 h-5'
-                    />
+                        src={characterIcon}
+                        alt={character.name}
+                        className='object-contain w-full' />
+
+                    <div className={`absolute bottom-0 left-0 w-full h-1 ${getRarityColor(character.rarity)}`}/>
+
+                    <div className='absolute top-1 right-1 w-7 h-7 rounded-full bg-iron-900/80 flex items-center justify-center shadow-md'>
+                        <img
+                            src={attributeIcon}
+                            className='w-5 h-5'
+                        />
+                    </div>
+                    {
+                        hasObjective() && (
+                            <div
+                                className='absolute top-1 left-1 w-6 h-6 bg-amber-600/90 rounded-full flex items-center justify-center shadow-md border-white'>
+                                <AlertCircle
+                                    className='w-4 h-4 text-zinc-300' />
+                            </div>
+                        )
+                    }
                 </div>
-                {
-                    hasObjective() && (
-                        <div
-                            className='absolute top-1 left-1 w-6 h-6 bg-amber-600/90 rounded-full flex items-center justify-center shadow-md border-white'>
-                            <AlertCircle
-                                className='w-4 h-4 text-zinc-300' />
-                        </div>
-                    )
-                }
-                <div className='text-center font-medium'>{character.name}</div>
+                <div className='bg-zinc-700 text-center font-medium'>{character.name}</div>
             </div>
         </div>
     )

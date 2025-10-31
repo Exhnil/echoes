@@ -162,6 +162,7 @@ const Inventory = () => {
               </TooltipContent>
             </Tooltip>
           </div>
+          
           {
             isLoading
               ? (<div className="flex text-center items-center justify-center">Loading...</div>) : (items
@@ -186,6 +187,8 @@ const Inventory = () => {
               )}
         </div>
       </div>
+
+      <div className='my-4 h-1 w-full bg-iron-700' />
 
       <div className="rounded p-2">
         <div className="grid grid-cols-12 gap-4">

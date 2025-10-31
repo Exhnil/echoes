@@ -65,7 +65,7 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
                         <CharacterGridSkeleton count={filteredCharacters.length || 38} />
                     ) :
                     (
-                        <div className='grid grid-cols-8 gap-x-4 gap-y-8'>
+                        <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-8 gap-x-4 gap-y-8'>
                             {filteredCharacters
                                 .sort((a, b) => a.name.localeCompare(b.name))
                                 .map((character) =>
