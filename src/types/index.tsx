@@ -15,7 +15,8 @@ export interface Character {
 }
 
 export interface Material {
-    name: string;
+    name?: string;
+    id: string;
     value: number;
 }
 
@@ -103,4 +104,12 @@ export interface CraftRecipe {
     outputId: string;
     inputs: { id: string; amounf: number };
     cost?: number
+}
+
+export interface Domain {
+    name: string
+    id: string
+    type: string
+    cost: number
+    materials: Material[]
 }

@@ -11,9 +11,9 @@ const addMats = (
   materials: Material[],
   totalMats: Record<string, Material>
 ) => {
-  for (const { name, value } of materials) {
-    totalMats[name] ??= { name, value: 0 };
-    totalMats[name].value += value;
+  for (const { name, id, value } of materials) {
+    totalMats[id] ??= { name, id, value: 0 };
+    totalMats[id].value += value;
   }
 };
 
@@ -63,6 +63,7 @@ export const completeCharacterSkills = (
       addMats(
         materials.map((material) => ({
           name: material.name,
+          id: material.id,
           value: material.value * skillStepNumber,
         })),
         totalMats
@@ -147,8 +148,8 @@ const consumeMats = (
   totalMats: Record<string, Material>
 ) => {
   const newInventory = structuredClone(inventory);
-  for (const [name, mat] of Object.entries(totalMats)) {
-    const itemState = newInventory.find((i) => i.name === name);
+  for (const [id, mat] of Object.entries(totalMats)) {
+    const itemState = newInventory.find((i) => i.id === id);
     if (!itemState) return inventory;
     itemState.owned =
       itemState.owned >= mat.value ? itemState.owned - mat.value : 0;

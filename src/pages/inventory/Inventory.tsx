@@ -87,7 +87,7 @@ const Inventory = () => {
     setItemsState(prev =>
       prev.map(item => ({
         ...item,
-        required: result[item.name]?.value ?? 0
+        required: result[item.id]?.value ?? 0
       }))
     )
 
@@ -162,7 +162,7 @@ const Inventory = () => {
               </TooltipContent>
             </Tooltip>
           </div>
-          
+
           {
             isLoading
               ? (<div className="flex text-center items-center justify-center">Loading...</div>) : (items

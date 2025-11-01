@@ -10,9 +10,9 @@ const addMats = (
   totalMats: Record<string, Material>,
   materials: Material[]
 ) => {
-  for (const { name, value } of materials) {
-    totalMats[name] ??= { name, value: 0 };
-    totalMats[name].value += value;
+  for (const { id, value } of materials) {
+    totalMats[id] ??= { id, value: 0 };
+    totalMats[id].value += value;
   }
 };
 
@@ -59,6 +59,7 @@ export const calculateTalents = (
         totalMats,
         materials.map((material) => ({
           name: material.name,
+          id: material.id,
           value: material.value * skillStepNumber,
         }))
       );
@@ -73,7 +74,7 @@ export const calculateTalents = (
 
   for (const inherent of state.inherentSkills ?? []) {
     if (inherent.state !== "planned") continue;
-    const mats = character.inherent_skill_materials?.[`rank_${inherent.rank}`];
+    const mats = character.inherent_skill_materials?.[`skill_${inherent.rank}`];
     if (mats) addMats(totalMats, mats);
   }
   return totalMats;

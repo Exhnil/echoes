@@ -193,8 +193,8 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
         const needed = calculateLevels(character, state)
         const saved = localStorage.getItem("inventoryState")
         const inventory: ItemState[] = saved ? JSON.parse(saved) : []
-        for (const [name, mat] of Object.entries(needed)) {
-            const item = inventory.find(i => i.name === name)
+        for (const [id, mat] of Object.entries(needed)) {
+            const item = inventory.find(i => i.id === id)
             if (!item || item.owned < mat.value) return false
         }
         return true

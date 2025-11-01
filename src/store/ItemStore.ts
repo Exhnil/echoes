@@ -1,48 +1,40 @@
 import { axiosInstance } from "@/lib/axios";
-import type { Item } from "@/types";
+import type { Domain, Item } from "@/types";
 import { create } from "zustand";
 
 interface ItemStore {
   items: Item[];
-  itemsList: string[];
+  domains: Domain[];
   isLoading: boolean;
   error: string | null;
 
-  fetchItemsList: () => Promise<void>;
-  fetchMaterial: () => Promise<void>;
   fetchAllMaterials: () => Promise<void>;
+  fetchAllDomains: () => Promise<void>;
 }
 
-export const useItemStore = create<ItemStore>((set, get) => ({
+export const useItemStore = create<ItemStore>((set) => ({
   items: [],
   itemsList: [],
+  domains: [],
   isLoading: false,
   error: null,
 
-  fetchItemsList: async () => {
-    if (get().isLoading) return;
-    set({ isLoading: true, error: null });
-    try {
-      const response = await axiosInstance.get("/materials");
-      set({ itemsList: response.data });
-    } catch (error: unknown) {
-      let errorMessage = "An unknown error occurred";
-      if (typeof error === "string") {
-        errorMessage = error;
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      set({ error: errorMessage });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-  fetchMaterial: async () => {},
   fetchAllMaterials: async () => {
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/materials/all");
       set({ items: response.data });
+    } catch (error: unknown) {
+      set({ error: parseError(error) });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+  fetchAllDomains: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axiosInstance.get("/domains/all");
+      set({ domains: response.data });
     } catch (error: unknown) {
       set({ error: parseError(error) });
     } finally {
