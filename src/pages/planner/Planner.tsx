@@ -117,67 +117,75 @@ const Planner = () => {
 
       </SectionLayout>
 
-      <SectionLayout
-        title="Forgery Challenge">
-        {forgeryMaterials.map((domain) => (
-          <DomainCard
-            key={domain.id}
-            domain={domain}
-            itemsState={itemsState}
-            items={items} />
-        ))}
-      </SectionLayout>
+      {forgeryMaterials.length > 0 && (
+        <SectionLayout
+          title="Forgery Challenge">
+          {forgeryMaterials.map((domain) => (
+            <DomainCard
+              key={domain.id}
+              domain={domain}
+              itemsState={itemsState}
+              items={items} />
+          ))}
+        </SectionLayout>
+      )}
 
-      <SectionLayout
-        title="Weekly Challenge">
-        {weeklyDomains.map((domain) => (
-          <DomainCard
-            key={domain.id}
-            domain={domain}
-            itemsState={itemsState}
-            items={items} />
-        ))}
-      </SectionLayout>
+      {weeklyDomains.length > 0 && (
+        <SectionLayout
+          title="Weekly Challenge">
+          {weeklyDomains.map((domain) => (
+            <DomainCard
+              key={domain.id}
+              domain={domain}
+              itemsState={itemsState}
+              items={items} />
+          ))}
+        </SectionLayout>
+      )}
 
-      <SectionLayout
-        title="Overlord Class">
-        {overlordClasses.map(domain => (
-          <DomainCard
-            key={domain.id}
-            domain={domain}
-            itemsState={itemsState}
-            items={items} />
-        ))}
-      </SectionLayout>
+      {overlordClasses.length > 0 && (
+        <SectionLayout
+          title="Overlord Class">
+          {overlordClasses.map(domain => (
+            <DomainCard
+              key={domain.id}
+              domain={domain}
+              itemsState={itemsState}
+              items={items} />
+          ))}
+        </SectionLayout>
+      )}
 
-      <SectionLayout
-        title="Exploration">
-        {localItemsStates.map((mat) => (
-          <Card
-            key={mat?.id}
-            className="bg-zinc-900/60 p-4 flex flex-col items-center gap-3 rounded-none border-neutral-800">
-            <CardTitle className="text-lg sm:text-xl font-bold text-center">
-              {mat?.name}
-            </CardTitle>
-            <div className="flex gap-2 mt-2">
-              <div className="relative bg-zinc-900/80 shadow-inner w-16 h-16">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <img
-                      src={getMaterialIcon((mat?.id ?? "").replace(/[' -]/g, "_"))}
-                      alt={mat?.name}
-                      className="w-16 h-16 object-cover" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{mat?.name}</p>
-                  </TooltipContent>
-                </Tooltip>
-                <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">{Math.max((mat?.required ?? 0) - (mat?.owned ?? 0), 0)}</span>
+      {localItemsStates.length > 0 && (
+        <SectionLayout
+          title="Exploration">
+          {localItemsStates.map((mat) => (
+            <Card
+              key={mat?.id}
+              className="bg-zinc-900/60 p-4 flex flex-col items-center gap-3 rounded-none border-neutral-800">
+              <CardTitle className="text-lg sm:text-xl font-bold text-center">
+                {mat?.name}
+              </CardTitle>
+              <div className="flex gap-2 mt-2">
+                <div className="relative bg-zinc-900/80 shadow-inner w-16 h-16">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <img
+                        src={getMaterialIcon((mat?.id ?? "").replace(/[' -]/g, "_"))}
+                        alt={mat?.name}
+                        className="w-16 h-16 object-cover" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{mat?.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">{Math.max((mat?.required ?? 0) - (mat?.owned ?? 0), 0)}</span>
+                </div>
               </div>
-            </div>
-          </Card>
-        ))}
-      </SectionLayout>
+            </Card>
+          ))}
+        </SectionLayout>
+      )}
 
     </div>
   )
