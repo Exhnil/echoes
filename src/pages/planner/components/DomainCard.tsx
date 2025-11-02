@@ -1,11 +1,12 @@
 import { Card, CardTitle } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { axiosInstance } from '@/lib/axios'
-import type { Domain, ItemState } from '@/types'
+import type { Domain, Item, ItemState } from '@/types'
 
 interface DomainCardProps {
     domain: Domain
     itemsState: ItemState[]
+    items?: Item[]
 }
 
 const getMaterialIcon = (id: string) => {
@@ -20,22 +21,48 @@ const rarityColors: Record<number, string> = {
 }
 
 const getRarityColor = (rarity: number) => {
+    console.log(rarity)
     return rarityColors[rarity] ?? "from-transparent"
 }
 
 const getDomainsRuns = (domain: Domain, itemsState: ItemState[]) => {
+
+    if (domain.type === "Forgery Challenge" && domain.materials.length === 4) {
+
+
+        const ratios = [1, 3, 9, 27]
+
+        let totalNeededBase = 0
+
+        domain.materials.forEach((mat, i) => {
+            const item = itemsState.find(it => it.id === mat.id)
+            const needed = Math.max((item?.required ?? 0) - (item?.owned ?? 0), 0)
+            totalNeededBase += needed * ratios[i]
+        })
+
+        const dropValues = domain.materials.map(m => m.value)
+        const totalDropPerRun = dropValues.reduce((a, b, i) => a + b * ratios[i], 0)
+
+        const runs = Math.ceil(totalNeededBase / totalDropPerRun)
+        return runs
+    }
+
     let maxRuns = 0
     for (const mat of domain.materials) {
         const item = itemsState.find(i => i.id === mat.id)
         const needed = item ? Math.max(item.required - item.owned, 0) : mat.value
         const runs = Math.ceil(needed / mat.value)
-        console.log((mat.value))
         if (runs > maxRuns) maxRuns = runs
     }
     return maxRuns
 }
 
-const DomainCard = ({ domain, itemsState }: DomainCardProps) => {
+const DomainCard = ({ domain, itemsState, items }: DomainCardProps) => {
+
+    const getItemRarity = (id: string) => {
+        return items?.find(i => i.id === id)?.rarity ?? 1
+    }
+
     return (
         <Card
             key={domain.id}
@@ -66,7 +93,7 @@ const DomainCard = ({ domain, itemsState }: DomainCardProps) => {
                                 </TooltipContent>
                             </Tooltip>
                             <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">{Math.max((item?.required ?? 0) - (item?.owned ?? 0), 0)}</span>
-                            <div className={`absolute bottom-0 w-full h-1 ${getRarityColor(4)}`} />
+                            <div className={`absolute bottom-0 w-full h-1 ${getRarityColor(getItemRarity(mat.id))}`} />
                         </div>
                     )
                 })}

@@ -50,15 +50,15 @@ const Weapons = () => {
       <div className="mb-6">
         <span className="block font-semibold mb-2">Filter</span>
         {isLoading ? (
-          <div className="flex">
+          <div className="flex gap-4">
             <FilterSkeleton size={5} />
             <FilterSkeleton size={5} />
           </div>
         ) : (
-          <div className="flex items-center gap-6">
+          <div className="relative inline-flex gap-4 p-2 rounded-s bg-gradient-to-r from-equator-500 to-transparent">
             <ToggleGroup
               type="single"
-              className="flex bg-zinc-800"
+              className="flex bg-iron-900"
               value={selectedRarity}
               onValueChange={setSelectedRarity}>
               <ToggleGroupItem
@@ -90,7 +90,7 @@ const Weapons = () => {
 
             <ToggleGroup
               type="single"
-              className="flex bg-zinc-800"
+              className="flex bg-iron-900"
               value={selectedWeaponType}
               onValueChange={setSelectedWeaponType}>
               {weaponsTypes.map((weapon) => (
@@ -114,6 +114,8 @@ const Weapons = () => {
           </div>
         )}
       </div>
+
+      <div className="my-4 h-1 w-full bg-iron-700"/>
 
       <Suspense>
         <WeaponGrid

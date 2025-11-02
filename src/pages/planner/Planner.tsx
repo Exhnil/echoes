@@ -1,6 +1,6 @@
 import { useItemStore } from "@/store/ItemStore"
 import { useEffect, useState } from "react"
-import type { Domain, ItemState } from "@/types"
+import type { Domain, Item, ItemState } from "@/types"
 import DomainCard from "./components/DomainCard"
 import SectionLayout from "./components/SectionLayout"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -41,6 +41,14 @@ const Planner = () => {
   const overlordClasses = filteredDomains.filter((d) => d.type === "Overlord Class")
   const weeklyDomains = filteredDomains.filter((d) => d.type === "Weekly Challenge")
   const localItems = items.filter((i) => i.source.toLowerCase().includes("local")) || []
+  const enemyDrops = items.filter((i) => i.source.toLowerCase().includes("enemies")) || []
+
+  const groupedEnemiesDrop = enemyDrops.reduce((acc, item) => {
+    const groupkey = item.group || item.id
+    if (!acc[groupkey]) acc[groupkey] = []
+    acc[groupkey].push(item)
+    return acc
+  }, {} as Record<string, Item[]>)
 
   const localItemsStates = localItems
     .map((item) => itemsState.find((s) => s.id === item.id))
@@ -55,12 +63,68 @@ const Planner = () => {
       <div className='my-4 h-1 w-full bg-iron-700' />
 
       <SectionLayout
+        title="Ennemy Drops"
+      >
+        {Object.entries(groupedEnemiesDrop).map(([group, groupItems]) => {
+          const neededItems = groupItems
+            .map(item => {
+              const state = itemsState.find(s => s.id === item.id)
+              const needed = Math.max((state?.required ?? 0) - (state?.owned ?? 0), 0)
+              return { ...item, needed }
+            })
+            .filter(item => item.needed > 0)
+
+          if (neededItems.length === 0) return null
+          neededItems.sort((a, b) => b.rarity - a.rarity)
+
+          const highest = neededItems[0].name
+          const title = highest
+
+          return (
+            <Card
+              key={group}
+              className="bg-zinc-900/60 p-4 flex flex-col items-center gap-3 rounded-none border-neutral-800">
+              <CardTitle className="text-lg sm:text-xl font-bold text-center">
+                {title}
+              </CardTitle>
+              <div className="flex gap-2 mt-2">
+                {groupItems.map(mat => {
+                  const state = itemsState.find(s => s.id === mat.id)
+                  const needed = Math.max((state?.required ?? 0) - (state?.owned ?? 0), 0)
+                  return (
+                    <div key={mat.id} className="relative w-16 h-16 shadow-inner bg-zinc-900/80">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <img
+                            src={getMaterialIcon(mat.id.replace(/[' -]/g, "_"))}
+                            alt={mat.name}
+                            className="w-16 h-16 object-cover"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{mat.name}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">{needed}</span>
+                      <div className={`absolute bottom-0 w-full h-1 ${["bg-green-400", "bg-blue-400", "bg-purple-600", "bg-equator-700"][mat.rarity - 2] ?? "from-transparent"}`} />
+                    </div>
+                  )
+                })}
+              </div>
+            </Card>
+          )
+        })}
+
+      </SectionLayout>
+
+      <SectionLayout
         title="Forgery Challenge">
         {forgeryMaterials.map((domain) => (
           <DomainCard
             key={domain.id}
             domain={domain}
-            itemsState={itemsState} />
+            itemsState={itemsState}
+            items={items} />
         ))}
       </SectionLayout>
 
@@ -70,7 +134,8 @@ const Planner = () => {
           <DomainCard
             key={domain.id}
             domain={domain}
-            itemsState={itemsState} />
+            itemsState={itemsState}
+            items={items} />
         ))}
       </SectionLayout>
 
@@ -80,7 +145,8 @@ const Planner = () => {
           <DomainCard
             key={domain.id}
             domain={domain}
-            itemsState={itemsState} />
+            itemsState={itemsState}
+            items={items} />
         ))}
       </SectionLayout>
 
