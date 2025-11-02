@@ -84,11 +84,14 @@ const Inventory = () => {
 
     const result = calculate(characters, weapons, parsedCharacters, parsedWeapons)
 
-    setItemsState(prev =>
-      prev.map(item => ({
+    setItemsState(prev => {
+      const updated = prev.map(item => ({
         ...item,
         required: result[item.id]?.value ?? 0
       }))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
+      return updated
+    }
     )
 
   }, [characters, itemsState.length, weapons])

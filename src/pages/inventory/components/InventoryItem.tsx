@@ -16,7 +16,7 @@ const rarityColors: Record<number, string> = {
     2: "bg-green-400",
     3: "bg-blue-400",
     4: "bg-purple-600",
-    5: "bg-yellow-400",
+    5: "bg-equator-700",
 }
 
 const getMaterialIcon = (id: string) => {
