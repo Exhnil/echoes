@@ -1,72 +1,80 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import InventoryItem from "./components/InventoryItem";
 import { useItemStore } from "@/store/ItemStore";
 import type { ItemState, Item, CharacterState, WeaponState } from "@/types";
 import { calculate } from "@/lib/calculateMaterials";
 import { useCharactersStore } from "@/store/CharactersStore";
 import { axiosInstance } from "@/lib/axios";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { materialsGroups, typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
 import { craftItem, getCraftableAmount } from "@/lib/crafting";
 
 const STORAGE_KEY = "inventoryState";
-const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`
+const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`;
 
 const Inventory = () => {
   const { items, fetchAllMaterials, isLoading } = useItemStore();
-  const { characters, fetchCharacters } = useCharactersStore()
-  const { weapons, fetchWeapons } = useWeaponStore()
+  const { characters, fetchCharacters } = useCharactersStore();
+  const { weapons, fetchWeapons } = useWeaponStore();
 
   const [itemsState, setItemsState] = useState<ItemState[]>([]);
-  const [showOnlyRequired, setShowOnlyRequired] = useState(false)
+  const [showOnlyRequired, setShowOnlyRequired] = useState(false);
 
-  const [init, setInit] = useState(false)
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("inventoryFilters")
+    const saved = localStorage.getItem("inventoryFilters");
     if (saved) {
-      const { required } = JSON.parse(saved)
-      setShowOnlyRequired(required || "")
+      const { required } = JSON.parse(saved);
+      setShowOnlyRequired(required || "");
     }
-    setInit(true)
-  }, [])
+    setInit(true);
+  }, []);
 
   useEffect(() => {
-    if (!init) return
+    if (!init) return;
     localStorage.setItem(
       "inventoryFilters",
       JSON.stringify({
-        required: showOnlyRequired
-      })
-    )
-  }, [showOnlyRequired, init])
+        required: showOnlyRequired,
+      }),
+    );
+  }, [showOnlyRequired, init]);
 
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchAllMaterials(), fetchCharacters(), fetchWeapons()])
-    }
-    loadData()
-  }, [fetchAllMaterials, fetchCharacters, fetchWeapons])
+      await Promise.all([
+        fetchAllMaterials(),
+        fetchCharacters(),
+        fetchWeapons(),
+      ]);
+    };
+    loadData();
+  }, [fetchAllMaterials, fetchCharacters, fetchWeapons]);
 
   useEffect(() => {
     if (!items.length) {
-      return
+      return;
     }
     const savedJson = localStorage.getItem(STORAGE_KEY);
 
     const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
     setItemsState(savedItems);
 
-    const itemsStateMap = Object.fromEntries(savedItems.map(s => [s.id, s]));
+    const itemsStateMap = Object.fromEntries(savedItems.map((s) => [s.id, s]));
 
     const state = items.map((item) => {
       return {
         id: item.id,
         name: item.name,
         owned: itemsStateMap[item.id]?.owned ?? 0,
-        required: itemsStateMap[item.id]?.required ?? 0
+        required: itemsStateMap[item.id]?.required ?? 0,
       };
     });
 
@@ -74,67 +82,74 @@ const Inventory = () => {
   }, [items]);
 
   useEffect(() => {
-    if (!itemsState.length) return
+    if (!itemsState.length) return;
 
-    const savedCharacters = localStorage.getItem("characterState")
-    const parsedCharacters: Record<string, CharacterState> = savedCharacters ? JSON.parse(savedCharacters) : {}
+    const savedCharacters = localStorage.getItem("characterState");
+    const parsedCharacters: Record<string, CharacterState> = savedCharacters
+      ? JSON.parse(savedCharacters)
+      : {};
 
-    const savedWeapons = localStorage.getItem("weaponState")
-    const parsedWeapons: Record<string, WeaponState> = savedWeapons ? JSON.parse(savedWeapons) : {}
+    const savedWeapons = localStorage.getItem("weaponState");
+    const parsedWeapons: Record<string, WeaponState> = savedWeapons
+      ? JSON.parse(savedWeapons)
+      : {};
 
-    const result = calculate(characters, weapons, parsedCharacters, parsedWeapons)
+    const result = calculate(
+      characters,
+      weapons,
+      parsedCharacters,
+      parsedWeapons,
+    );
 
-    setItemsState(prev => {
-      const updated = prev.map(item => ({
+    setItemsState((prev) => {
+      const updated = prev.map((item) => ({
         ...item,
-        required: result[item.id]?.value ?? 0
-      }))
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-      return updated
-    }
-    )
-
-  }, [characters, itemsState.length, weapons])
+        required: result[item.id]?.value ?? 0,
+      }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, [characters, itemsState.length, weapons]);
 
   const handleCraft = (itemId: string) => {
     setItemsState((prev) => {
-      const updated = craftItem(itemId, prev, items)
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-      return updated
-    })
-  }
+      const updated = craftItem(itemId, prev, items);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleOwnedChange = (id: string, value: number) => {
     setItemsState((prev) => {
       const updated = prev.map((item) =>
-        item.id === id ? { ...item, owned: value } : item
-      )
+        item.id === id ? { ...item, owned: value } : item,
+      );
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated))
-      return updated
-    })
-  }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  };
 
-  const variantMap = new Map<string, string>()
-  materialsGroups.forEach(group => {
-    group.variants.forEach(v => variantMap.set(v, group.base))
-  })
+  const variantMap = new Map<string, string>();
+  materialsGroups.forEach((group) => {
+    group.variants.forEach((v) => variantMap.set(v, group.base));
+  });
 
   const sortItems = (a: Item, b: Item) => {
-    const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type)
-    if (typeDiff !== 0) return typeDiff
+    const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+    if (typeDiff !== 0) return typeDiff;
 
-    const aBase = variantMap.get(a.name) ?? a.name
+    /*const aBase = variantMap.get(a.name) ?? a.name
     const bBase = variantMap.get(b.name) ?? b.name
 
     const baseDiff = aBase.localeCompare(bBase)
-    if (baseDiff !== 0) return baseDiff
+    if (baseDiff !== 0) return baseDiff*/
 
-    const rarity = b.rarity - a.rarity
-    if (rarity !== 0) return rarity
+    const rarity = b.rarity - a.rarity;
+    if (rarity !== 0) return rarity;
 
-    return a.name.localeCompare(b.name)
-  }
+    return a.name.localeCompare(b.name);
+  };
 
   return (
     <div className="p-6">
@@ -145,8 +160,10 @@ const Inventory = () => {
       <div className="flex">
         <Button
           className="text-zinc-300 bg-zinc-600 hover:bg-zinc-700"
-          onClick={() => setShowOnlyRequired(prev => !prev)}
-        >{showOnlyRequired ? "Show All" : "Required only"}</Button>
+          onClick={() => setShowOnlyRequired((prev) => !prev)}
+        >
+          {showOnlyRequired ? "Show All" : "Required only"}
+        </Button>
       </div>
 
       <div className="p-2">
@@ -166,61 +183,66 @@ const Inventory = () => {
             </Tooltip>
           </div>
 
-          {
-            isLoading
-              ? (<div className="flex text-center items-center justify-center">Loading...</div>) : (items
-                .filter(item => item.name === "Shell Credit")
-                .map((item) => {
-                  const state = itemsState.find(s => s.id === item.id)
-                  if (!state) return null
-                  return (
-                    <div key={item.id} className="flex flex-col flex-1">
-
-                      <span
-                        className={`text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ${(state.owned ?? 0) >= (state.required ?? 0) ? "bg-green-400" : "bg-red-400"}`}
-                      >
-                        {state.required}
-                      </span>
-                      <input
-                        value={state.owned ?? 0}
-                        onChange={(e) => handleOwnedChange(item.id, Number(e.target.value))}
-                        className="text-center flex-1 rounded-br px-1 py-0.5 bg-zinc-700" />
-                    </div>)
-                })
-              )}
+          {isLoading ? (
+            <div className="flex text-center items-center justify-center">
+              Loading...
+            </div>
+          ) : (
+            items
+              .filter((item) => item.name === "Shell Credit")
+              .map((item) => {
+                const state = itemsState.find((s) => s.id === item.id);
+                if (!state) return null;
+                return (
+                  <div key={item.id} className="flex flex-col flex-1">
+                    <span
+                      className={`text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ${(state.owned ?? 0) >= (state.required ?? 0) ? "bg-green-400" : "bg-red-400"}`}
+                    >
+                      {state.required}
+                    </span>
+                    <input
+                      value={state.owned ?? 0}
+                      onChange={(e) =>
+                        handleOwnedChange(item.id, Number(e.target.value))
+                      }
+                      className="text-center flex-1 rounded-br px-1 py-0.5 bg-zinc-700"
+                    />
+                  </div>
+                );
+              })
+          )}
         </div>
       </div>
 
-      <div className='my-4 h-1 w-full bg-iron-700' />
+      <div className="my-4 h-1 w-full bg-iron-700" />
 
       <div className="rounded p-2">
         <div className="grid grid-cols-12 gap-4">
-          {
-            items
-              .filter((item) => item.name !== "Shell Credit")
-              .sort(sortItems)
-              .map((item) => {
-                const state = itemsState.find(s => s.id === item.id)
-                const craftable = getCraftableAmount(item.id, itemsState, items)
-                if (!state) return null
-                if (showOnlyRequired && (state.required ?? 0) <= 0) {
-                  return null
-                }
-                return (
-                  <InventoryItem
-                    key={item.id}
-                    item={item}
-                    state={state}
-                    onChange={(value) => handleOwnedChange(item.id, value)}
-                    craftable={craftable}
-                    onCraft={() => handleCraft(item.id)} />
-                )
-              })
-          }
+          {items
+            .filter((item) => item.name !== "Shell Credit")
+            .sort(sortItems)
+            .map((item) => {
+              const state = itemsState.find((s) => s.id === item.id);
+              const craftable = getCraftableAmount(item.id, itemsState, items);
+              if (!state) return null;
+              if (showOnlyRequired && (state.required ?? 0) <= 0) {
+                return null;
+              }
+              return (
+                <InventoryItem
+                  key={item.id}
+                  item={item}
+                  state={state}
+                  onChange={(value) => handleOwnedChange(item.id, value)}
+                  craftable={craftable}
+                  onCraft={() => handleCraft(item.id)}
+                />
+              );
+            })}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Inventory
+export default Inventory;
