@@ -1,45 +1,49 @@
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { weaponIcons } from "@/constants/icons"
-import { useMiscStore } from "@/store/MiscStore"
-import { Star } from "lucide-react"
-import { lazy, Suspense, useEffect, useState } from "react"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import FilterSkeleton from "../skeletons/FilterSkeleton"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { weaponIcons } from "@/constants/icons";
+import { useMiscStore } from "@/store/MiscStore";
+import { Star } from "lucide-react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import FilterSkeleton from "../skeletons/FilterSkeleton";
 
-const WeaponGrid = lazy(() => import("./components/WeaponGrid"))
+const WeaponGrid = lazy(() => import("./components/WeaponGrid"));
 
 const Weapons = () => {
-  const { weaponsTypes, fetchWeaponsType, isLoading } = useMiscStore()
+  const { weaponsTypes, fetchMisc, isLoading } = useMiscStore();
 
-  const [selectedRarity, setSelectedRarity] = useState<string>("")
-  const [selectedWeaponType, setSelectedWeaponType] = useState<string>("")
+  const [selectedRarity, setSelectedRarity] = useState<string>("");
+  const [selectedWeaponType, setSelectedWeaponType] = useState<string>("");
 
-  const [init, setInit] = useState(false)
+  const [init, setInit] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("weaponFilters")
+    const saved = localStorage.getItem("weaponFilters");
     if (saved) {
-      const { rarity, weapon } = JSON.parse(saved)
-      setSelectedRarity(rarity || "")
-      setSelectedWeaponType(weapon || "")
+      const { rarity, weapon } = JSON.parse(saved);
+      setSelectedRarity(rarity || "");
+      setSelectedWeaponType(weapon || "");
     }
-    setInit(true)
-  }, [])
+    setInit(true);
+  }, []);
 
   useEffect(() => {
-    if (!init) return
+    if (!init) return;
     localStorage.setItem(
       "weaponFilters",
       JSON.stringify({
         rarity: selectedRarity,
         weapon: selectedWeaponType,
-      })
-    )
-  }, [init, selectedRarity, selectedWeaponType])
+      }),
+    );
+  }, [init, selectedRarity, selectedWeaponType]);
 
   useEffect(() => {
-    fetchWeaponsType()
-  }, [fetchWeaponsType])
+    fetchMisc();
+  }, []);
 
   return (
     <div className="p-6">
@@ -60,30 +64,36 @@ const Weapons = () => {
               type="single"
               className="flex bg-iron-900"
               value={selectedRarity}
-              onValueChange={setSelectedRarity}>
+              onValueChange={setSelectedRarity}
+            >
               <ToggleGroupItem
                 value="1"
-                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+              >
                 <Star className="text-zinc-400" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="2"
-                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+              >
                 <Star className="text-green-500" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="3"
-                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+              >
                 <Star className="text-blue-600" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="4"
-                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+              >
                 <Star className="text-purple-600" />
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="5"
-                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+              >
                 <Star className="text-amber-400" />
               </ToggleGroupItem>
             </ToggleGroup>
@@ -92,17 +102,21 @@ const Weapons = () => {
               type="single"
               className="flex bg-iron-900"
               value={selectedWeaponType}
-              onValueChange={setSelectedWeaponType}>
+              onValueChange={setSelectedWeaponType}
+            >
               {weaponsTypes.map((weapon) => (
                 <ToggleGroupItem
                   value={weapon}
                   key={weapon}
-                  className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer">
+                  className="px-3 py-1 border hover:bg-zinc-700 cursor-pointer"
+                >
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <img src={weaponIcons[weapon]}
+                      <img
+                        src={weaponIcons[weapon]}
                         alt={weapon}
-                        className="w-5 h-5" />
+                        className="w-5 h-5"
+                      />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>{weapon}</p>
@@ -115,15 +129,13 @@ const Weapons = () => {
         )}
       </div>
 
-      <div className="my-4 h-1 w-full bg-iron-700"/>
+      <div className="my-4 h-1 w-full bg-iron-700" />
 
       <Suspense>
-        <WeaponGrid
-          rarity={selectedRarity}
-          weaponType={selectedWeaponType} />
+        <WeaponGrid rarity={selectedRarity} weaponType={selectedWeaponType} />
       </Suspense>
     </div>
-  )
-}
+  );
+};
 
-export default Weapons
+export default Weapons;

@@ -9,10 +9,7 @@ interface MiscStore {
 
   isLoading: boolean;
   error: string | null;
-
-  fetchNations: () => Promise<void>;
-  fetchAttributes: () => Promise<void>;
-  fetchWeaponsType: () => Promise<void>;
+  fetchMisc: () => Promise<void>;
 }
 
 export const useMiscStore = create<MiscStore>((set, get) => ({
@@ -22,36 +19,14 @@ export const useMiscStore = create<MiscStore>((set, get) => ({
   isLoading: false,
   error: null,
 
-  fetchNations: async () => {
-    if (get().isLoading) return;
-    set({ isLoading: true, error: null });
-    try {
-      const response = await axiosInstance.get("/misc/misc");
-      set({ nations: response.data.nations });
-    } catch (error: any) {
-      set({ error: error.response.data.message });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-  fetchAttributes: async () => {
+  fetchMisc: async () => {
     if (get().isLoading) return;
     set({ isLoading: true, error: null });
     try {
       const response = await axiosInstance.get("/misc/misc");
       set({ attributes: response.data.attributes });
-    } catch (error: any) {
-      set({ error: error.response.data.message });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-  fetchWeaponsType: async () => {
-    if (get().isLoading) return;
-    set({ isLoading: true, error: null });
-    try {
-      const response = await axiosInstance.get("/misc/misc");
       set({ weaponsTypes: response.data.weapons });
+      set({ nations: response.data.nations });
     } catch (error: any) {
       set({ error: parseError(error) });
     } finally {
