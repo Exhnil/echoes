@@ -7,30 +7,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { axiosInstance } from "@/lib/axios";
-import {
-  updateLevelState,
-  updateSkillLevel,
-  updateTalentsState,
-} from "@/lib/state";
 import { ranks, skillNames } from "@/lib/constants";
-import type {
-  Character,
-  CharacterProgress,
-  ItemState,
-  SkillProgress,
-  UnlockProgress,
-} from "@/types";
+import type { Character, CharacterProgress } from "@/types";
 import { Check, ChevronRight, Flag, Save } from "lucide-react";
-import { useEffect } from "react";
 import SkillLevelInput from "./SkillLevelInput";
 import LevelSelector from "./LevelSelector";
 import { Button } from "@/components/ui/button";
-import {
-  completeCharacterLevel,
-  completeCharacterSkills,
-  completeCharacterTalents,
-} from "@/lib/completion";
-import { calculateLevels, calculateTalents } from "@/lib/calculateMaterials";
 import ConfirmDialog from "@/layout/components/ConfirmDialog";
 import { useCharacterProgressStore } from "@/store/CharacterProgressStore";
 
@@ -44,11 +26,17 @@ const getCharacterIcon = (id: string) => {
   return `${axiosInstance.defaults.baseURL}/characters/${id}/icon.png`;
 };
 
-const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
-  const { charactersProgress } = useCharacterProgressStore();
+const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
+  const {
+    charactersProgress,
+    updateLevel,
+    updateSkills,
+    updateTalents,
+    resetCharacter,
+  } = useCharacterProgressStore();
   console.log(charactersProgress);
 
-  const updateLevel = (
+  /*const updateLevel = (
     currentOrTarget: "current" | "target",
     lvl: number,
     ascension: number,
@@ -66,7 +54,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
     //newState: UnlockProgress,
     {};
 
-  const resetCharacter = (id: string) => {};
+  const resetCharacter = (id: string) => {};*/
 
   const completeLeveling = () => {};
 
@@ -166,7 +154,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                   }
                   level={charactersProgress[character.id].level.currentLevel}
                   onSelect={(lvl, ascension) =>
-                    updateLevel("current", lvl, ascension)
+                    updateLevel(character.id, "current", lvl, ascension)
                   }
                 />
                 <ChevronRight className="h-6 w-6" />
@@ -176,7 +164,7 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                   }
                   level={charactersProgress[character.id].level.targetLevel}
                   onSelect={(lvl, ascension) =>
-                    updateLevel("target", lvl, ascension)
+                    updateLevel(character.id, "target", lvl, ascension)
                   }
                   minValue={
                     charactersProgress[character.id].level.currentLevel ?? 1
@@ -217,7 +205,12 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                               .currentSkillLevel ?? 1
                           }
                           onChange={(val) =>
-                            updateSkills("currentSkillLevel", skill, val)
+                            updateSkills(
+                              character.id,
+                              "currentSkillLevel",
+                              skill,
+                              val,
+                            )
                           }
                         />
 
@@ -229,7 +222,12 @@ const CharacterModal = ({ open, character, onClose }: CharacterModalProps) => {
                               .targetSkillLevel ?? 1
                           }
                           onChange={(val) =>
-                            updateSkills("targetSkillLevel", skill, val)
+                            updateSkills(
+                              character.id,
+                              "targetSkillLevel",
+                              skill,
+                              val,
+                            )
                           }
                         />
                       </div>

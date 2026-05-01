@@ -1,5 +1,5 @@
-import { skillNames } from "@/lib/constants";
-import type { Character, CharacterProgress, SkillProgress } from "@/types";
+import { initCharacterProgressState, updateLevelState } from "@/lib/state";
+import type { Character, CharacterProgress } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -9,6 +9,20 @@ interface CharacterProgressStore {
   error: string | null;
 
   initCharProgress: (char: Character) => void;
+  updateLevel: (
+    id: string,
+    side: "current" | "target",
+    level: number,
+    ascension: number,
+  ) => void;
+  updateSkills: (
+    id: string,
+    side: "currentSkillLevel" | "targetSkillLevel",
+    skillName: string,
+    level: number,
+  ) => void;
+  updateTalents: () => void;
+  resetCharacter: (id: string) => void;
 }
 
 export const useCharacterProgressStore = create<CharacterProgressStore>()(
@@ -19,35 +33,31 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
       initCharProgress: (char: Character) => {
         if (get().charactersProgress[char.id]) return;
         set((prev) => ({
-          charactersProgress: {
-            ...prev.charactersProgress,
-            [char.id]: {
-              id: char.id,
-              level: {
-                currentLevel: 1,
-                targetLevel: 1,
-                currentAscensionLevel: 0,
-                targetAscensionLevel: 0,
-              },
-              skills: skillNames.reduce(
-                (acc, skill) => {
-                  acc[skill] = {
-                    currentSkillLevel: 1,
-                    targetSkillLevel: 1,
-                  } as SkillProgress;
-                  return acc;
-                },
-                {} as Record<string, SkillProgress>,
-              ),
-              bonusStats: {
-                1: ["none", "none", "none", "none"],
-                2: ["none", "none", "none", "none"],
-              },
-              inherentSkills: { 1: "none", 2: "none" },
-            },
-          },
+          charactersProgress: initCharacterProgressState(
+            prev.charactersProgress,
+            char.id,
+          ),
         }));
       },
+      updateLevel: (
+        id: string,
+        side: "current" | "target",
+        level: number,
+        ascension: number,
+      ) => {
+        set((prev) => ({
+          charactersProgress: updateLevelState(
+            prev.charactersProgress,
+            id,
+            side,
+            level,
+            ascension,
+          ),
+        }));
+      },
+      updateSkills() {},
+      updateTalents() {},
+      resetCharacter() {},
     }),
     {
       name: "charactersProgress",
