@@ -1,6 +1,6 @@
 import { attributeIcons } from "@/constants/icons";
 import { axiosInstance } from "@/lib/axios";
-import type { Character, CharacterState } from "@/types";
+import type { Character } from "@/types";
 import { AlertCircle } from "lucide-react";
 import { useCallback } from "react";
 
@@ -24,7 +24,7 @@ const CharacterCard = ({
   setSelectedCharacter,
 }: CharacterCardProps) => {
   const hasObjective = () => {
-    const saved = localStorage.getItem("characterState");
+    /*const saved = localStorage.getItem("characterState");
     const parsed: Record<string, CharacterState> = saved
       ? JSON.parse(saved)
       : {};
@@ -49,7 +49,7 @@ const CharacterCard = ({
       return true;
 
     if (characterState.inherentSkills.some((s) => s.state === "planned"))
-      return true;
+      return true;*/
 
     return false;
   };

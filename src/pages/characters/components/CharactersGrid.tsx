@@ -4,6 +4,7 @@ import CharacterModal from "./CharacterModal";
 import type { Character } from "@/types";
 import CharacterCard from "./CharacterCard";
 import React from "react";
+import { useCharacterProgressStore } from "@/store/CharacterProgressStore";
 
 interface CharactersGridProps {
   rarity: string;
@@ -13,6 +14,7 @@ interface CharactersGridProps {
 
 const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
   const { characters, fetchCharacters } = useCharactersStore();
+  const { initCharProgress } = useCharacterProgressStore();
 
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
     null,
@@ -31,6 +33,11 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
     );
   }, [attribute, characters, rarity, weapon]);
 
+  const handleOpenCharacter = (character: Character) => {
+    initCharProgress(character);
+    setSelectedCharacter(character);
+  };
+
   return (
     <>
       <div className="mt-6">
@@ -40,19 +47,19 @@ const CharactersGrid = ({ rarity, attribute, weapon }: CharactersGridProps) => {
             .map((character) => (
               <CharacterCard
                 key={character.id}
-                setSelectedCharacter={(character) =>
-                  setSelectedCharacter(character)
-                }
+                setSelectedCharacter={handleOpenCharacter}
                 character={character}
               />
             ))}
         </div>
       </div>
-      <CharacterModal
-        open={!!selectedCharacter}
-        character={selectedCharacter}
-        onClose={() => setSelectedCharacter(null)}
-      />
+      {selectedCharacter && (
+        <CharacterModal
+          open={true}
+          character={selectedCharacter}
+          onClose={() => setSelectedCharacter(null)}
+        />
+      )}
     </>
   );
 };
