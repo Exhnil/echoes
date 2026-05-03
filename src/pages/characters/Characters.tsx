@@ -16,21 +16,38 @@ const CharactersGrid = lazy(() => import("./components/CharactersGrid"));
 const Characters = () => {
   const { attributes, weaponsTypes, fetchMisc, isLoading } = useMiscStore();
 
-  const [selectedRarity, setSelectedRarity] = useState<string>("");
-  const [selectedAttribute, setSelectedAttribute] = useState<string>("");
-  const [selectedWeapon, setSelectedWeapon] = useState<string>("");
+  const getSavedFilters = () => {
+    const saved = localStorage.getItem("characterFilters");
+    return saved ? JSON.parse(saved) : null;
+  };
+
+  const [selectedRarity, setSelectedRarity] = useState<string>(() => {
+    const savedFilter = getSavedFilters();
+    return savedFilter?.rarity ?? "";
+  });
+  const [selectedAttribute, setSelectedAttribute] = useState<string>(() => {
+    const savedFilter = getSavedFilters();
+    return savedFilter?.attribute ?? "";
+  });
+  const [selectedWeapon, setSelectedWeapon] = useState<string>(() => {
+    const savedFilter = getSavedFilters();
+    return savedFilter?.weapon ?? "";
+  });
 
   useEffect(() => {
     fetchMisc();
-
-    const savedFilters = localStorage.getItem("characterFilters");
-    if (!savedFilters) return;
-
-    const parsedJson = JSON.parse(savedFilters);
-    setSelectedAttribute(parsedJson.attribute || "");
-    setSelectedRarity(parsedJson.rarity || "");
-    setSelectedWeapon(parsedJson.weapon || "");
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "characterFilters",
+      JSON.stringify({
+        rarity: selectedRarity,
+        weapon: selectedWeapon,
+        attribute: selectedAttribute,
+      }),
+    );
+  }, [selectedRarity, selectedAttribute, selectedWeapon]);
 
   return (
     <div className="p-6">

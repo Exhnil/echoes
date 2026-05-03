@@ -65,8 +65,7 @@ export interface Weapon {
   ascension_materials: AscensionMaterials;
 }
 
-export interface WeaponState {
-  id: string;
+export interface WeaponProgress {
   level: LevelProgress;
 }
 
@@ -98,4 +97,11 @@ export interface Domain {
   type: string;
   cost: number;
   materials: Material[];
+}
+
+export interface ChangelogEntry {
+  id: string;
+  date: string;
+  title: string;
+  content: string;
 }

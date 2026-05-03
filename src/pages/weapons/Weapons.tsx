@@ -9,29 +9,27 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import FilterSkeleton from "../skeletons/FilterSkeleton";
+import WeaponGridSkeleton from "../skeletons/WeaponGridSkeleton";
 
 const WeaponGrid = lazy(() => import("./components/WeaponGrid"));
 
 const Weapons = () => {
   const { weaponsTypes, fetchMisc, isLoading } = useMiscStore();
 
-  const [selectedRarity, setSelectedRarity] = useState<string>("");
-  const [selectedWeaponType, setSelectedWeaponType] = useState<string>("");
-
-  const [init, setInit] = useState(false);
+  const [selectedRarity, setSelectedRarity] = useState<string>(() => {
+    const saved = localStorage.getItem("weaponFilters");
+    return saved ? JSON.parse(saved).rarity : "";
+  });
+  const [selectedWeaponType, setSelectedWeaponType] = useState<string>(() => {
+    const saved = localStorage.getItem("weaponFilters");
+    return saved ? JSON.parse(saved).weapon : "";
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem("weaponFilters");
-    if (saved) {
-      const { rarity, weapon } = JSON.parse(saved);
-      setSelectedRarity(rarity || "");
-      setSelectedWeaponType(weapon || "");
-    }
-    setInit(true);
+    fetchMisc();
   }, []);
 
   useEffect(() => {
-    if (!init) return;
     localStorage.setItem(
       "weaponFilters",
       JSON.stringify({
@@ -39,11 +37,7 @@ const Weapons = () => {
         weapon: selectedWeaponType,
       }),
     );
-  }, [init, selectedRarity, selectedWeaponType]);
-
-  useEffect(() => {
-    fetchMisc();
-  }, []);
+  }, [selectedRarity, selectedWeaponType]);
 
   return (
     <div className="p-6">
@@ -131,7 +125,7 @@ const Weapons = () => {
 
       <div className="my-4 h-1 w-full bg-iron-700" />
 
-      <Suspense>
+      <Suspense fallback={<WeaponGridSkeleton />}>
         <WeaponGrid rarity={selectedRarity} weaponType={selectedWeaponType} />
       </Suspense>
     </div>

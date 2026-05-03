@@ -1,6 +1,6 @@
 import {
   initCharacterProgressState,
-  updateLevelState,
+  updateCharacterLevelState,
   updateSkillLevel,
   updateTalentsState,
 } from "@/lib/state";
@@ -57,7 +57,7 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
         ascension: number,
       ) => {
         set((prev) => ({
-          charactersProgress: updateLevelState(
+          charactersProgress: updateCharacterLevelState(
             prev.charactersProgress,
             id,
             side,

@@ -1,4 +1,10 @@
-import type { CharacterProgress, SkillProgress, UnlockProgress } from "@/types";
+import type {
+  CharacterProgress,
+  LevelProgress,
+  SkillProgress,
+  UnlockProgress,
+  WeaponProgress,
+} from "@/types";
 import { skillNames } from "./constants";
 
 export const initCharacterProgressState = (
@@ -32,13 +38,29 @@ export const initCharacterProgressState = (
   };
 };
 
-export const updateLevelState = (
-  prev: Record<string, CharacterProgress>,
+export const initWeaponsProgressState = (
+  prev: Record<string, WeaponProgress>,
   id: string,
+): Record<string, WeaponProgress> => {
+  return {
+    ...prev,
+    [id]: {
+      level: {
+        currentLevel: 1,
+        targetLevel: 1,
+        currentAscensionLevel: 1,
+        targetAscensionLevel: 1,
+      },
+    },
+  };
+};
+
+const updateLevelFields = (
+  levelProgress: LevelProgress,
   side: "current" | "target",
   lvl: number,
   ascension: number,
-): Record<string, CharacterProgress> => {
+) => {
   const map = {
     current: {
       level: "currentLevel",
@@ -50,18 +72,47 @@ export const updateLevelState = (
     },
   } as const;
 
+  return {
+    ...levelProgress,
+    [map[side].level]: lvl,
+    [map[side].ascension]: ascension,
+  };
+};
+
+export const updateWeaponLevelState = (
+  prev: Record<string, WeaponProgress>,
+  id: string,
+  side: "current" | "target",
+  lvl: number,
+  ascension: number,
+) => {
+  const weapon = prev[id];
+  if (!weapon) return prev;
+
+  return {
+    ...prev,
+    [id]: {
+      ...weapon,
+      level: updateLevelFields(weapon.level, side, lvl, ascension),
+    },
+  };
+};
+
+export const updateCharacterLevelState = (
+  prev: Record<string, CharacterProgress>,
+  id: string,
+  side: "current" | "target",
+  lvl: number,
+  ascension: number,
+) => {
   const character = prev[id];
   if (!character) return prev;
 
   return {
     ...prev,
     [id]: {
-      ...prev[id],
-      level: {
-        ...prev[id].level,
-        [map[side].level]: lvl,
-        [map[side].ascension]: ascension,
-      },
+      ...character,
+      level: updateLevelFields(character.level, side, lvl, ascension),
     },
   };
 };
