@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import InventoryItem from "./components/InventoryItem";
 import { useItemStore } from "@/store/ItemStore";
-import type { ItemState, Item, CharacterState, WeaponState } from "@/types";
-import { calculate } from "@/lib/calculateMaterials";
+import type { Item } from "@/types";
 import { useCharactersStore } from "@/store/CharactersStore";
 import { axiosInstance } from "@/lib/axios";
 import {
@@ -13,39 +11,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { materialsGroups, typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
-import { craftItem, getCraftableAmount } from "@/lib/crafting";
+import { useInventoryStore } from "@/store/InventoryStore";
+import InventoryItem from "./components/InventoryItem";
 
-const STORAGE_KEY = "inventoryState";
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`;
 
 const Inventory = () => {
   const { items, fetchAllMaterials, isLoading } = useItemStore();
   const { characters, fetchCharacters } = useCharactersStore();
   const { weapons, fetchWeapons } = useWeaponStore();
+  const { inventoryState, setOwned } = useInventoryStore();
 
-  const [itemsState, setItemsState] = useState<ItemState[]>([]);
   const [showOnlyRequired, setShowOnlyRequired] = useState(false);
-
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("inventoryFilters");
-    if (saved) {
-      const { required } = JSON.parse(saved);
-      setShowOnlyRequired(required || "");
-    }
-    setInit(true);
-  }, []);
-
-  useEffect(() => {
-    if (!init) return;
-    localStorage.setItem(
-      "inventoryFilters",
-      JSON.stringify({
-        required: showOnlyRequired,
-      }),
-    );
-  }, [showOnlyRequired, init]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,75 +36,26 @@ const Inventory = () => {
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons]);
 
   useEffect(() => {
-    if (!items.length) {
-      return;
-    }
-    const savedJson = localStorage.getItem(STORAGE_KEY);
+    if (!inventoryState) return;
 
-    const savedItems: ItemState[] = savedJson ? JSON.parse(savedJson) : [];
-    setItemsState(savedItems);
-
-    const itemsStateMap = Object.fromEntries(savedItems.map((s) => [s.id, s]));
-
-    const state = items.map((item) => {
-      return {
-        id: item.id,
-        name: item.name,
-        owned: itemsStateMap[item.id]?.owned ?? 0,
-        required: itemsStateMap[item.id]?.required ?? 0,
-      };
-    });
-
-    setItemsState(state);
-  }, [items]);
-
-  useEffect(() => {
-    if (!itemsState.length) return;
-
-    const savedCharacters = localStorage.getItem("characterState");
-    const parsedCharacters: Record<string, CharacterState> = savedCharacters
-      ? JSON.parse(savedCharacters)
-      : {};
-
-    const savedWeapons = localStorage.getItem("weaponState");
-    const parsedWeapons: Record<string, WeaponState> = savedWeapons
-      ? JSON.parse(savedWeapons)
-      : {};
-
-    const result = calculate(
+    /*const result = calculate(
       characters,
       weapons,
-      parsedCharacters,
-      parsedWeapons,
-    );
-
-    setItemsState((prev) => {
-      const updated = prev.map((item) => ({
-        ...item,
-        required: result[item.id]?.value ?? 0,
-      }));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  }, [characters, itemsState.length, weapons]);
+      charactersProgress,
+      weaponsProgress,
+    );*/
+  }, [characters, weapons]);
 
   const handleCraft = (itemId: string) => {
-    setItemsState((prev) => {
+    /*setItemsState((prev) => {
       const updated = craftItem(itemId, prev, items);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
-    });
+    });*/
   };
 
   const handleOwnedChange = (id: string, value: number) => {
-    setItemsState((prev) => {
-      const updated = prev.map((item) =>
-        item.id === id ? { ...item, owned: value } : item,
-      );
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
+    setOwned(id, value);
   };
 
   const variantMap = new Map<string, string>();
@@ -138,12 +66,6 @@ const Inventory = () => {
   const sortItems = (a: Item, b: Item) => {
     const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
     if (typeDiff !== 0) return typeDiff;
-
-    /*const aBase = variantMap.get(a.name) ?? a.name
-    const bBase = variantMap.get(b.name) ?? b.name
-
-    const baseDiff = aBase.localeCompare(bBase)
-    if (baseDiff !== 0) return baseDiff*/
 
     const rarity = b.rarity - a.rarity;
     if (rarity !== 0) return rarity;
@@ -189,19 +111,16 @@ const Inventory = () => {
             </div>
           ) : (
             items
-              .filter((item) => item.name === "Shell Credit")
+              .filter((item) => item.id === "shell-credit")
               .map((item) => {
-                const state = itemsState.find((s) => s.id === item.id);
-                if (!state) return null;
+                const required = 0;
                 return (
                   <div key={item.id} className="flex flex-col flex-1">
-                    <span
-                      className={`text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ${(state.owned ?? 0) >= (state.required ?? 0) ? "bg-green-400" : "bg-red-400"}`}
-                    >
-                      {state.required}
+                    <span className="text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ">
+                      {required}
                     </span>
                     <input
-                      value={state.owned ?? 0}
+                      value={inventoryState[item.id] ?? 0}
                       onChange={(e) =>
                         handleOwnedChange(item.id, Number(e.target.value))
                       }
@@ -218,23 +137,22 @@ const Inventory = () => {
 
       <div className="rounded p-2">
         <div className="grid grid-cols-12 gap-4">
-          {items
-            .filter((item) => item.name !== "Shell Credit")
+          {[...items]
+            .filter((item) => item.id !== "shell-credit")
             .sort(sortItems)
             .map((item) => {
-              const state = itemsState.find((s) => s.id === item.id);
-              const craftable = getCraftableAmount(item.id, itemsState, items);
-              if (!state) return null;
-              if (showOnlyRequired && (state.required ?? 0) <= 0) {
+              const required = 0;
+              //const craftable = getCraftableAmount(item.id, itemsState, items);
+              if (showOnlyRequired && required <= 0) {
                 return null;
               }
               return (
                 <InventoryItem
-                  key={item.id}
                   item={item}
-                  state={state}
+                  owned={inventoryState[item.id] ?? 0}
+                  required={required}
+                  craftable={0}
                   onChange={(value) => handleOwnedChange(item.id, value)}
-                  craftable={craftable}
                   onCraft={() => handleCraft(item.id)}
                 />
               );

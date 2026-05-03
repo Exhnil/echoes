@@ -66,12 +66,12 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
           ),
         }));
       },
-      updateSkills(
+      updateSkills: (
         id: string,
         side: "currentSkillLevel" | "targetSkillLevel",
         skillName: string,
         level: number,
-      ) {
+      ) => {
         set((prev) => ({
           charactersProgress: updateSkillLevel(
             prev.charactersProgress,
@@ -82,13 +82,13 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
           ),
         }));
       },
-      updateTalents(
+      updateTalents: (
         id: string,
         side: "bonusStats" | "inherentSkills",
         rank: number,
         value: UnlockProgress,
         index?: number,
-      ) {
+      ) => {
         set((prev) => ({
           charactersProgress: updateTalentsState(
             prev.charactersProgress,
@@ -100,7 +100,7 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
           ),
         }));
       },
-      resetCharacter(id: string) {
+      resetCharacter: (id: string) => {
         delete get().charactersProgress[id];
         set((prev) => {
           const { [id]: _, ...rest } = prev.charactersProgress;

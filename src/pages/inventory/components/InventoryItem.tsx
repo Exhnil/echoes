@@ -4,13 +4,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
-import type { Item, ItemState } from "@/types";
+import type { Item } from "@/types";
 import { Hammer, Minus, Plus } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
 interface InventoryItemProps {
   item: Item;
-  state: ItemState;
+  owned: number;
+  required: number;
   craftable: number;
   onChange: (value: number) => void;
   onCraft: () => void;
@@ -29,39 +30,37 @@ const getMaterialIcon = (id: string) => {
   }/materials/${id.toLowerCase()}/${id.toLowerCase()}.png`;
 };
 
+const placeholderPath = `${axiosInstance.defaults.baseURL}/materials/placeholder/icon.png`;
+
 const getRarityColor = (rarity: number) => {
   return rarityColors[rarity] ?? "from-transparent";
 };
 
 const InventoryItem = ({
   item,
-  state,
+  owned,
+  required,
   craftable,
   onChange,
   onCraft,
 }: InventoryItemProps) => {
   const [imgSrc, setImgSrc] = useState(
-    getMaterialIcon(item.id.replace(/-/g, "_"))
+    getMaterialIcon(item.id.replace(/-/g, "_")),
   );
 
-  const placeholderPath = useMemo(
-    () => `${axiosInstance.defaults.baseURL}/materials/placeholder/icon.png`,
-    []
-  );
-  const isEnough = state.owned >= state.required;
-  const isEmpty = state.required === 0;
+  const isEnough = owned >= required;
 
   const handleError = useCallback(() => {
     setImgSrc(placeholderPath);
-  }, [placeholderPath]);
+  }, []);
 
-  const increment = () => onChange(state.owned + 1);
-  const decrement = () => onChange(Math.max(0, state.owned - 1));
+  const increment = () => onChange(owned + 1);
+  const decrement = () => onChange(Math.max(0, owned - 1));
 
   return (
     <div
       className={`flex flex-col items-center border rounded-none bg-zinc-800 transition-opacity ${
-        isEmpty ? "opacity-60" : "opacity-100"
+        required === 0 ? "opacity-60" : "opacity-100"
       } min-w-[4rem]`}
     >
       <div className="flex justify-center relative w-full h-16 aspect-square bg-iron-900">
@@ -84,7 +83,7 @@ const InventoryItem = ({
             {item.rarity > 1 && (
               <div
                 className={`absolute bottom-0 left-0 w-full h-1  ${getRarityColor(
-                  item.rarity
+                  item.rarity,
                 )}`}
               />
             )}
@@ -102,18 +101,22 @@ const InventoryItem = ({
       <div className="flex w-full flex-col">
         <span
           className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${
-            isEmpty ? "bg-zinc-500" : isEnough ? "bg-green-400" : "bg-red-400"
+            required === 0
+              ? "bg-zinc-500"
+              : isEnough
+                ? "bg-green-400"
+                : "bg-red-400"
           }`}
         >
-          {state.required}
+          {required}
         </span>
         <div className="flex items-center bg-zinc-700">
           <button className="text-white" onClick={increment}>
             <Plus className="w-4 h-4" />
           </button>
           <input
-            value={state.owned}
-            onChange={(e) => onChange(Number(e.target.value))}
+            value={owned}
+            onChange={(e) => onChange(Number(e.target.value) || 0)}
             className="flex-1 text-center rounded-none px-1 py-0.5 bg-zinc-700 min-w-[2rem]"
           />
           <button className="text-white" onClick={decrement}>
