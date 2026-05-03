@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useItemStore } from "@/store/ItemStore";
 import type { Item } from "@/types";
 import { useCharactersStore } from "@/store/CharactersStore";
@@ -13,13 +13,18 @@ import { materialsGroups, typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
 import { useInventoryStore } from "@/store/InventoryStore";
 import InventoryItem from "./components/InventoryItem";
+import { calculate } from "@/lib/calculateMaterials";
+import { useCharacterProgressStore } from "@/store/CharacterProgressStore";
+import { useWeaponProgressStore } from "@/store/WeaponProgressStore";
 
 const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`;
 
 const Inventory = () => {
   const { items, fetchAllMaterials, isLoading } = useItemStore();
   const { characters, fetchCharacters } = useCharactersStore();
+  const { charactersProgress } = useCharacterProgressStore();
   const { weapons, fetchWeapons } = useWeaponStore();
+  const { weaponsProgress } = useWeaponProgressStore();
   const { inventoryState, setOwned } = useInventoryStore();
 
   const [showOnlyRequired, setShowOnlyRequired] = useState(false);
@@ -35,16 +40,9 @@ const Inventory = () => {
     loadData();
   }, [fetchAllMaterials, fetchCharacters, fetchWeapons]);
 
-  useEffect(() => {
-    if (!inventoryState) return;
-
-    /*const result = calculate(
-      characters,
-      weapons,
-      charactersProgress,
-      weaponsProgress,
-    );*/
-  }, [characters, weapons]);
+  const requiredMap = useMemo(() => {
+    return calculate(characters, weapons, charactersProgress, weaponsProgress);
+  }, [characters, weapons, charactersProgress, weaponsProgress]);
 
   const handleCraft = (itemId: string) => {
     /*setItemsState((prev) => {
@@ -113,7 +111,7 @@ const Inventory = () => {
             items
               .filter((item) => item.id === "shell-credit")
               .map((item) => {
-                const required = 0;
+                const required = requiredMap[item.name] ?? 0;
                 return (
                   <div key={item.id} className="flex flex-col flex-1">
                     <span className="text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ">
@@ -141,13 +139,14 @@ const Inventory = () => {
             .filter((item) => item.id !== "shell-credit")
             .sort(sortItems)
             .map((item) => {
-              const required = 0;
+              const required = requiredMap[item.name] ?? 0;
               //const craftable = getCraftableAmount(item.id, itemsState, items);
               if (showOnlyRequired && required <= 0) {
                 return null;
               }
               return (
                 <InventoryItem
+                  key={item.id}
                   item={item}
                   owned={inventoryState[item.id] ?? 0}
                   required={required}
