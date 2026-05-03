@@ -1,5 +1,10 @@
-import { initCharacterProgressState, updateLevelState } from "@/lib/state";
-import type { Character, CharacterProgress } from "@/types";
+import {
+  initCharacterProgressState,
+  updateLevelState,
+  updateSkillLevel,
+  updateTalentsState,
+} from "@/lib/state";
+import type { Character, CharacterProgress, UnlockProgress } from "@/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -21,7 +26,13 @@ interface CharacterProgressStore {
     skillName: string,
     level: number,
   ) => void;
-  updateTalents: () => void;
+  updateTalents: (
+    id: string,
+    side: "bonusStats" | "inherentSkills",
+    rank: number,
+    value: UnlockProgress,
+    index?: number,
+  ) => void;
   resetCharacter: (id: string) => void;
 }
 
@@ -55,9 +66,47 @@ export const useCharacterProgressStore = create<CharacterProgressStore>()(
           ),
         }));
       },
-      updateSkills() {},
-      updateTalents() {},
-      resetCharacter() {},
+      updateSkills(
+        id: string,
+        side: "currentSkillLevel" | "targetSkillLevel",
+        skillName: string,
+        level: number,
+      ) {
+        set((prev) => ({
+          charactersProgress: updateSkillLevel(
+            prev.charactersProgress,
+            id,
+            skillName,
+            side,
+            level,
+          ),
+        }));
+      },
+      updateTalents(
+        id: string,
+        side: "bonusStats" | "inherentSkills",
+        rank: number,
+        value: UnlockProgress,
+        index?: number,
+      ) {
+        set((prev) => ({
+          charactersProgress: updateTalentsState(
+            prev.charactersProgress,
+            id,
+            side,
+            rank,
+            value,
+            index,
+          ),
+        }));
+      },
+      resetCharacter(id: string) {
+        delete get().charactersProgress[id];
+        set((prev) => {
+          const { [id]: _, ...rest } = prev.charactersProgress;
+          return { charactersProgress: rest };
+        });
+      },
     }),
     {
       name: "charactersProgress",

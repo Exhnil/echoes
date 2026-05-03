@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { axiosInstance } from "@/lib/axios";
 import { ranks, skillNames } from "@/lib/constants";
-import type { Character, CharacterProgress } from "@/types";
+import type { Character, UnlockProgress } from "@/types";
 import { Check, ChevronRight, Flag, Save } from "lucide-react";
 import SkillLevelInput from "./SkillLevelInput";
 import LevelSelector from "./LevelSelector";
@@ -34,27 +34,6 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
     updateTalents,
     resetCharacter,
   } = useCharacterProgressStore();
-  console.log(charactersProgress);
-
-  /*const updateLevel = (
-    currentOrTarget: "current" | "target",
-    lvl: number,
-    ascension: number,
-  ) => {};
-
-  const updateSkills = (
-    currentOrTarget: "currentSkillLevel" | "targetSkillLevel",
-    skillName: string,
-    lvl: number,
-  ) => {};
-
-  const updateTalents = () =>
-    //type: "bonusStats" | "inherentSkills",
-    //id: string,
-    //newState: UnlockProgress,
-    {};
-
-  const resetCharacter = (id: string) => {};*/
 
   const completeLeveling = () => {};
 
@@ -62,6 +41,7 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
 
   const completeSkills = () => {};
 
+  /*
   const canCompleteLevel = (
     character: Character,
     state: CharacterProgress,
@@ -72,7 +52,7 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
     state: CharacterProgress,
   ) => {};
 
-  /*const levelReady =
+  const levelReady =
     character && characterState[character.id]
       ? canCompleteLevel(character, characterState[character.id])
       : false;
@@ -112,7 +92,10 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
             <ConfirmDialog
               title="Reset character"
               description="All progress will be reset"
-              onConfirm={() => resetCharacter(character.id)}
+              onConfirm={() => {
+                onClose();
+                resetCharacter(character.id);
+              }}
               trigger={
                 <Button
                   variant="secondary"
@@ -250,7 +233,15 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
                               type="single"
                               key={index}
                               value={bonus}
-                              onValueChange={() => updateTalents()}
+                              onValueChange={(val) =>
+                                updateTalents(
+                                  character.id,
+                                  "bonusStats",
+                                  rank,
+                                  val as UnlockProgress,
+                                  index,
+                                )
+                              }
                             >
                               <ToggleGroupItem
                                 value="planned"
@@ -275,15 +266,22 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
                         Inherent Skills
                       </h4>
                       <div className="flex items-center justify-center gap-2">
-                        {Object.values(
+                        {Object.entries(
                           charactersProgress[character.id].inherentSkills,
-                        ).map((skill, index) => (
+                        ).map(([rank, skill]) => (
                           <ToggleGroup
-                            key={index}
+                            key={rank}
                             className="flex flex-row"
                             type="single"
                             value={skill}
-                            onValueChange={(val) => updateTalents()}
+                            onValueChange={(val) =>
+                              updateTalents(
+                                character.id,
+                                "inherentSkills",
+                                Number(rank),
+                                val as UnlockProgress,
+                              )
+                            }
                           >
                             <ToggleGroupItem
                               className="bg-zinc-600 hover:bg-zinc-500"

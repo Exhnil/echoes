@@ -1,9 +1,4 @@
-import type {
-  CharacterProgress,
-  LevelProgress,
-  SkillProgress,
-  UnlockProgress,
-} from "@/types";
+import type { CharacterProgress, SkillProgress, UnlockProgress } from "@/types";
 import { skillNames } from "./constants";
 
 export const initCharacterProgressState = (
@@ -37,13 +32,13 @@ export const initCharacterProgressState = (
   };
 };
 
-export const updateLevelState = <T extends { level: LevelProgress }>(
-  prev: Record<string, T>,
+export const updateLevelState = (
+  prev: Record<string, CharacterProgress>,
   id: string,
   side: "current" | "target",
   lvl: number,
   ascension: number,
-) => {
+): Record<string, CharacterProgress> => {
   const map = {
     current: {
       level: "currentLevel",
@@ -75,19 +70,21 @@ export const updateSkillLevel = (
   prev: Record<string, CharacterProgress>,
   characterId: string,
   skillName: string,
-  key: "currentSkillLevel" | "targetSkillLevel",
+  side: "currentSkillLevel" | "targetSkillLevel",
   value: number,
-) => {
-  if (value < 1 || value > 10) return;
+): Record<string, CharacterProgress> => {
+  if (value < 1 || value > 10) return prev;
+  const character = prev[characterId];
+  if (!character) return prev;
   return {
     ...prev,
     [characterId]: {
-      ...prev[characterId],
+      ...character,
       skills: {
-        ...prev[characterId].skills,
+        ...character.skills,
         [skillName]: {
-          ...prev[characterId].skills[skillName],
-          [key]: value,
+          ...character.skills[skillName],
+          [side]: value,
         },
       },
     },
@@ -97,25 +94,40 @@ export const updateSkillLevel = (
 export const updateTalentsState = (
   prev: Record<string, CharacterProgress>,
   characterId: string,
-  id: string,
-  key: "bonusStats" | "inherentSkills",
+  side: "bonusStats" | "inherentSkills",
+  rank: number,
   value: UnlockProgress,
-) => {
+  index?: number,
+): Record<string, CharacterProgress> => {
   const character = prev[characterId];
   if (!character) return prev;
 
-  const list = character[key];
-  const index = list.findIndex((i) => i.id === id);
-  if (index < 0) return prev;
-
-  const updatedList = [...list];
-  updatedList[index] = { ...updatedList[index], state: value };
-
-  return {
-    ...prev,
-    [characterId]: {
-      ...prev[characterId],
-      [key]: updatedList,
-    },
-  };
+  if (side === "bonusStats") {
+    if (index === undefined) return prev;
+    const current = character.bonusStats[rank] || [];
+    const updated = [...current];
+    updated[index] = value;
+    return {
+      ...prev,
+      [characterId]: {
+        ...character,
+        [side]: {
+          ...character.bonusStats,
+          [rank]: updated,
+        },
+      },
+    };
+  } else if (side === "inherentSkills") {
+    return {
+      ...prev,
+      [characterId]: {
+        ...character,
+        [side]: {
+          ...character.inherentSkills,
+          [rank]: value,
+        },
+      },
+    };
+  }
+  return prev;
 };
