@@ -15,7 +15,6 @@ export interface Character {
 }
 
 export interface Material {
-  name: string;
   id: string;
   value: number;
 }

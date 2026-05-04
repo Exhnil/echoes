@@ -111,7 +111,7 @@ const Inventory = () => {
             items
               .filter((item) => item.id === "shell-credit")
               .map((item) => {
-                const required = requiredMap[item.name] ?? 0;
+                const required = requiredMap[item.id] ?? 0;
                 return (
                   <div key={item.id} className="flex flex-col flex-1">
                     <span className="text-center px-1 py-0.5 overflow-hidden text-sm font-semibold ">
@@ -139,7 +139,7 @@ const Inventory = () => {
             .filter((item) => item.id !== "shell-credit")
             .sort(sortItems)
             .map((item) => {
-              const required = requiredMap[item.name] ?? 0;
+              const required = requiredMap[item.id] ?? 0;
               //const craftable = getCraftableAmount(item.id, itemsState, items);
               if (showOnlyRequired && required <= 0) {
                 return null;

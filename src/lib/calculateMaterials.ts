@@ -9,7 +9,7 @@ import type {
 
 const addMats = (totalMats: Record<string, number>, materials: Material[]) => {
   for (const mat of materials) {
-    totalMats[mat.name] = (totalMats[mat.name] ?? 0) + mat.value;
+    totalMats[mat.id] = (totalMats[mat.id] ?? 0) + mat.value;
   }
 };
 
