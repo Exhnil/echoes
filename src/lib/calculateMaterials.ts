@@ -1,6 +1,7 @@
 import type {
   Character,
   CharacterProgress,
+  Domain,
   LevelProgress,
   Material,
   Weapon,
@@ -112,4 +113,46 @@ const mergeMats = (
     }
     target[id] = (target[id] ?? 0) + quantity;
   }
+};
+
+export const computeDomainRuns = (
+  domain: Domain,
+  requiredMap: Record<string, number>,
+  inventory: Record<string, number>,
+): number => {
+  if (domain.type === "Forgery Challenge" && domain.materials.length === 4) {
+    console.log(domain.materials);
+    const ratios = [1, 3, 9, 27];
+
+    let totalRequiredFlat = 0;
+    let totalOwnedFlat = 0;
+
+    domain.materials.forEach((mat, i) => {
+      const owned = inventory[mat.id] ?? 0;
+      const required = requiredMap[mat.id ?? 0];
+
+      totalRequiredFlat += required * ratios[i];
+      totalOwnedFlat += owned * ratios[i];
+    });
+
+    const totalNeededFlat = Math.max(totalRequiredFlat - totalOwnedFlat, 0);
+
+    const totalDropPerRun = domain.materials.reduce(
+      (acc, mat, i) => acc + mat.value * ratios[i],
+      0,
+    );
+
+    return Math.ceil(totalNeededFlat / totalDropPerRun);
+  }
+
+  let maxRuns = 0;
+
+  for (const mat of domain.materials) {
+    const required = requiredMap[mat.id] ?? 0;
+    const owned = inventory[mat.id] ?? 0;
+    const needed = Math.max(required - owned, 0);
+    const runs = Math.ceil(needed / mat.value);
+    if (runs > maxRuns) maxRuns = runs;
+  }
+  return maxRuns;
 };

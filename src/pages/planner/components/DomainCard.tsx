@@ -5,13 +5,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
-import type { Domain, Item, ItemState } from "@/types";
+import type { Domain, Item } from "@/types";
+import { useMemo } from "react";
 
 interface DomainCardProps {
   domain: Domain;
   requiredMap: Record<string, number>;
   runs: number;
-  items?: Item[];
+  items: Item[];
 }
 
 const getMaterialIcon = (id: string) => {
@@ -29,46 +30,14 @@ const getRarityColor = (rarity: number) => {
   return rarityColors[rarity] ?? "from-transparent";
 };
 
-const getDomainsRuns = (domain: Domain, itemsState: ItemState[]) => {
-  if (domain.type === "Forgery Challenge" && domain.materials.length === 4) {
-    const ratios = [1, 3, 9, 27];
-
-    let totalRequiredBase = 0;
-    let totalOwnedBase = 0;
-    let totalNeededBase = 0;
-
-    domain.materials.forEach((mat, i) => {
-      const item = itemsState.find((it) => it.id === mat.id);
-      const owned = item?.owned ?? 0;
-      const required = item?.required ?? 0;
-      totalOwnedBase += owned * ratios[i];
-      totalRequiredBase += required * ratios[i];
-    });
-
-    totalNeededBase = Math.max(totalRequiredBase - totalOwnedBase, 0);
-    const dropValues = domain.materials.map((m) => m.value);
-    const totalDropPerRun = dropValues.reduce(
-      (a, b, i) => a + b * ratios[i],
-      0,
-    );
-
-    const runs = Math.ceil(totalNeededBase / totalDropPerRun);
-    return runs;
-  }
-
-  let maxRuns = 0;
-  for (const mat of domain.materials) {
-    const item = itemsState.find((i) => i.id === mat.id);
-    const needed = item ? Math.max(item.required - item.owned, 0) : mat.value;
-    const runs = Math.ceil(needed / mat.value);
-    if (runs > maxRuns) maxRuns = runs;
-  }
-  return maxRuns;
-};
-
 const DomainCard = ({ domain, requiredMap, runs, items }: DomainCardProps) => {
+  const itemsById = useMemo(
+    () => Object.fromEntries(items.map((i) => [i.id, i])),
+    [items],
+  );
+
   const getItemRarity = (id: string) => {
-    return items?.find((i) => i.id === id)?.rarity ?? 1;
+    return itemsById[id]?.rarity ?? 1;
   };
 
   return (
@@ -89,11 +58,13 @@ const DomainCard = ({ domain, requiredMap, runs, items }: DomainCardProps) => {
           const required = requiredMap[mat.id] ?? 0;
 
           return (
-            <div className="relative bg-zinc-900/80 shadow-inner w-16 h-16">
+            <div
+              key={mat.id}
+              className="relative bg-zinc-900/80 shadow-inner w-16 h-16"
+            >
               <Tooltip>
                 <TooltipTrigger asChild>
                   <img
-                    key={mat.id}
                     src={getMaterialIcon(mat.id.replace(/[' -]/g, "_"))}
                     alt={mat.id}
                     className="w-16 h-16 object-cover"

@@ -1,6 +1,5 @@
 import { useItemStore } from "@/store/ItemStore";
 import { useEffect, useMemo } from "react";
-import type { Domain, Item, ItemState } from "@/types";
 import DomainCard from "./components/DomainCard";
 import SectionLayout from "./components/SectionLayout";
 import {
@@ -11,7 +10,7 @@ import {
 import { Card, CardTitle } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios";
 import { useInventoryStore } from "@/store/InventoryStore";
-import { calculate } from "@/lib/calculateMaterials";
+import { calculate, computeDomainRuns } from "@/lib/calculateMaterials";
 import { useCharacterProgressStore } from "@/store/CharacterProgressStore";
 import { useCharactersStore } from "@/store/CharactersStore";
 import { useWeaponProgressStore } from "@/store/WeaponProgressStore";
@@ -66,7 +65,7 @@ const Planner = () => {
   };
 
   const filteredDomains = domains.filter((domain) =>
-    domain.materials.some((mat) => requiredMap[mat.id] > 0),
+    domain.materials.some((mat) => (requiredMap[mat.id] ?? 0) > 0),
   );
 
   const forgeryMaterials = filteredDomains.filter(
@@ -90,6 +89,15 @@ const Planner = () => {
   const filteredLocalItems = filterBySource("local");
 
   const filteredEnemyDrops = filterBySource("enemies");
+
+  const runsByDomain = useMemo(() => {
+    return Object.fromEntries(
+      domains.map((d) => [
+        d.id,
+        computeDomainRuns(d, requiredMap, inventoryState),
+      ]),
+    );
+  }, [domains, requiredMap, inventoryState]);
 
   return (
     <div className="p-6 space-y-6">
@@ -144,7 +152,7 @@ const Planner = () => {
               domain={domain}
               items={items}
               requiredMap={requiredMap}
-              runs={0}
+              runs={runsByDomain[domain.id]}
             />
           ))}
         </SectionLayout>
@@ -158,7 +166,7 @@ const Planner = () => {
               domain={domain}
               items={items}
               requiredMap={requiredMap}
-              runs={0}
+              runs={runsByDomain[domain.id]}
             />
           ))}
         </SectionLayout>
@@ -172,7 +180,7 @@ const Planner = () => {
               domain={domain}
               items={items}
               requiredMap={requiredMap}
-              runs={0}
+              runs={runsByDomain[domain.id]}
             />
           ))}
         </SectionLayout>
