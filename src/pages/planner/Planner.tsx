@@ -113,6 +113,13 @@ const Planner = () => {
     );
   }, [domains, requiredMap, inventoryState]);
 
+  const hasNothingToFarm =
+    filteredEnemyDrops.length === 0 &&
+    forgeryMaterials.length === 0 &&
+    weeklyDomains.length === 0 &&
+    overlordClasses.length === 0 &&
+    filteredLocalItems.length === 0;
+
   return (
     <div className="p-6 space-y-6">
       <div className="items-center mb-4">
@@ -120,6 +127,19 @@ const Planner = () => {
       </div>
 
       <div className="my-4 h-1 w-full bg-iron-700" />
+
+      {hasNothingToFarm && (
+        <div className="flex flex-col items-center justify-center py-20 text-center text-zinc-400">
+          <h2 className="text-xl font-semibold mb-2">
+            The void is looking at you
+          </h2>
+          <p className="text-sm">
+            You have nothing to farm. Did you liberate yourself from the farm ?
+            Saw the light at the end of the grind ? Or maybe you just didn't add
+            anything. In that case, go add an objective, quick, and come back.
+          </p>
+        </div>
+      )}
 
       {filteredEnemyDrops.length > 0 && (
         <SectionLayout title="Enemy Drops">

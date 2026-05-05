@@ -66,7 +66,6 @@ const Inventory = () => {
       entry.owned += owned * weight;
       entry.required += required * weight;
     });
-    console.log(map);
     return map;
   }, [items, inventoryState, requiredMap]);
 

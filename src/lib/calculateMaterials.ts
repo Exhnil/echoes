@@ -121,8 +121,6 @@ export const computeDomainRuns = (
   inventory: Record<string, number>,
 ): number => {
   if (domain.type === "Forgery Challenge" && domain.materials.length === 4) {
-    console.log(domain.materials);
-
     let totalRequired = 0;
     let totalOwned = 0;
     let totalDropPerRun = 0;
