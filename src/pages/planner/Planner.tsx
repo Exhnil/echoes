@@ -80,7 +80,7 @@ const Planner = () => {
     return items.filter(
       (i) =>
         i.source.toLocaleLowerCase().includes(sourceKey) &&
-        (requiredMap[i.id] ?? 0) > inventoryState[i.id],
+        (requiredMap[i.id] ?? 0) > (inventoryState[i.id] ?? 0),
     );
   };
 
