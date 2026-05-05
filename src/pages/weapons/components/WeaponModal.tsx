@@ -19,19 +19,17 @@ interface WeaponModalProps {
 }
 
 const getWeaponIcon = (id: string) => {
-  return `${axiosInstance.defaults.baseURL}/weapons/${id.toLowerCase()}/icon.png`;
+  const normId = id
+    .toLocaleLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[_\s]/g, "-");
+  return `${axiosInstance.defaults.baseURL}/weapons/${normId}/images/icon`;
 };
 
 const WeaponModal = ({ open, weapon, onClose }: WeaponModalProps) => {
   const { weaponsProgress, updateLevel } = useWeaponProgressStore();
 
   const completeLeveling = () => {};
-
-  /*
-  const levelReady =
-    weapon && weaponState[weapon.id]
-      ? canCompleteLevel(weapon, weaponState[weapon.id])
-      : false;*/
 
   if (!weapon) return null;
   return (

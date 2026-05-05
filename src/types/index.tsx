@@ -16,6 +16,7 @@ export interface Character {
 
 export interface Material {
   id: string;
+  rarity: number;
   value: number;
 }
 
@@ -75,13 +76,6 @@ export interface Item {
   rarity: number;
   source: string;
   group: string;
-}
-
-export interface ItemState {
-  id: string;
-  name: string;
-  owned: number;
-  required: number;
 }
 
 export interface CraftRecipe {

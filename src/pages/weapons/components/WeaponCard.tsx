@@ -21,23 +21,15 @@ const getRarityColor = (rarity: number) => {
 
 const WeaponCard = ({ weapon, setSelectedWeapon }: WeaponCardProps) => {
   const hasObjective = () => {
-    /*const saved = localStorage.getItem("weaponState")
-    const parsed: Record<string, WeaponState> = saved ? JSON.parse(saved) : {}
-
-    const weaponState = parsed[weapon.id]
-    if (!weaponState) return false
-
-    const level = weaponState.level
-    if (level.currentAscensionLevel !== level.targetAscensionLevel || level.currentLevel !== level.targetLevel) {
-      return true
-    }
-*/
     return false;
   };
 
   const getWeaponIcon = useCallback((id: string) => {
-    const url = `${axiosInstance.defaults.baseURL}/weapons/${id.toLowerCase()}/icon.png`;
-    return url;
+    const normId = id
+      .toLocaleLowerCase()
+      .replace(/&/g, "and")
+      .replace(/[_\s]/g, "-");
+    return `${axiosInstance.defaults.baseURL}/weapons/${normId}/images/icon`;
   }, []);
 
   return (

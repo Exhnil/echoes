@@ -23,7 +23,8 @@ interface CharacterModalProps {
 }
 
 const getCharacterIcon = (id: string) => {
-  return `${axiosInstance.defaults.baseURL}/characters/${id}/icon.png`;
+  const normId = id.toLocaleLowerCase().replace(/[_\s]/g, "-");
+  return `${axiosInstance.defaults.baseURL}/characters/${normId}/images/icon`;
 };
 
 const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
@@ -40,26 +41,6 @@ const CharacterModal = ({ character, onClose }: CharacterModalProps) => {
   const completeTalents = () => {};
 
   const completeSkills = () => {};
-
-  /*
-  const canCompleteLevel = (
-    character: Character,
-    state: CharacterProgress,
-  ) => {};
-
-  const canCompleteTalents = (
-    character: Character,
-    state: CharacterProgress,
-  ) => {};
-
-  const levelReady =
-    character && characterState[character.id]
-      ? canCompleteLevel(character, characterState[character.id])
-      : false;
-  const talentsReady =
-    character && characterState[character.id]
-      ? canCompleteTalents(character, characterState[character.id])
-      : false;*/
 
   if (!character) return null;
   return (

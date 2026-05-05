@@ -18,45 +18,17 @@ const getRarityColor = (rarity: number) => {
   return rarityColors[rarity] ?? "from-transparent";
 };
 
-//Changer la couleur pour de bas vers haut, en vers tranparent ou zinc
 const CharacterCard = ({
   character,
   setSelectedCharacter,
 }: CharacterCardProps) => {
   const hasObjective = () => {
-    /*const saved = localStorage.getItem("characterState");
-    const parsed: Record<string, CharacterState> = saved
-      ? JSON.parse(saved)
-      : {};
-
-    const characterState = parsed[character.id];
-    if (!characterState) return false;
-
-    const level = characterState.level;
-    if (
-      level.currentAscensionLevel !== level.targetAscensionLevel ||
-      level.currentLevel !== level.targetLevel
-    ) {
-      return true;
-    }
-
-    for (const skillId in characterState.skills) {
-      const skill = characterState.skills[skillId];
-      if (skill.currentSkillLevel !== skill.targetSkillLevel) return true;
-    }
-
-    if (characterState.bonusStats.some((b) => b.state === "planned"))
-      return true;
-
-    if (characterState.inherentSkills.some((s) => s.state === "planned"))
-      return true;*/
-
     return false;
   };
 
   const getCharacterIcon = useCallback((id: string) => {
-    const url = `${axiosInstance.defaults.baseURL}/characters/${id.toLowerCase()}/icon.png`;
-    return url;
+    const normId = id.toLocaleLowerCase().replace(/[_\s]/g, "-");
+    return `${axiosInstance.defaults.baseURL}/characters/${normId}/images/icon`;
   }, []);
 
   return (

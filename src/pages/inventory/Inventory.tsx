@@ -9,15 +9,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { materialsGroups, typeOrder } from "@/lib/constants";
+import { typeOrder } from "@/lib/constants";
 import { useWeaponStore } from "@/store/WeaponStore";
 import { useInventoryStore } from "@/store/InventoryStore";
 import InventoryItem from "./components/InventoryItem";
 import { calculate } from "@/lib/calculateMaterials";
 import { useCharacterProgressStore } from "@/store/CharacterProgressStore";
 import { useWeaponProgressStore } from "@/store/WeaponProgressStore";
+import { getCraftable } from "@/lib/crafting";
 
-const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell_credit/shell_credit.png`;
+const creditIcon = `${axiosInstance.defaults.baseURL}/materials/shell-credit/images/shell-credit`;
 
 const Inventory = () => {
   const { items, fetchAllMaterials, isLoading } = useItemStore();
@@ -44,22 +45,34 @@ const Inventory = () => {
     return calculate(characters, weapons, charactersProgress, weaponsProgress);
   }, [characters, weapons, charactersProgress, weaponsProgress]);
 
-  const handleCraft = (itemId: string) => {
-    /*setItemsState((prev) => {
-      const updated = craftItem(itemId, prev, items);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });*/
+  const getItemWeight = (rarity: number) => {
+    return Math.pow(3, rarity - 2);
   };
+
+  const groupValues = useMemo(() => {
+    const map = new Map<string, { owned: number; required: number }>();
+    items.forEach((item) => {
+      if (!item.group || item.group === "none") return;
+      const weight = getItemWeight(item.rarity);
+
+      const owned = inventoryState[item.id] ?? 0;
+      const required = requiredMap[item.id] ?? 0;
+
+      if (!map.has(item.group)) {
+        map.set(item.group, { owned: 0, required: 0 });
+      }
+
+      const entry = map.get(item.group)!;
+      entry.owned += owned * weight;
+      entry.required += required * weight;
+    });
+    console.log(map);
+    return map;
+  }, [items, inventoryState, requiredMap]);
 
   const handleOwnedChange = (id: string, value: number) => {
     setOwned(id, value);
   };
-
-  const variantMap = new Map<string, string>();
-  materialsGroups.forEach((group) => {
-    group.variants.forEach((v) => variantMap.set(v, group.base));
-  });
 
   const sortItems = (a: Item, b: Item) => {
     const typeDiff = typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
@@ -140,7 +153,11 @@ const Inventory = () => {
             .sort(sortItems)
             .map((item) => {
               const required = requiredMap[item.id] ?? 0;
-              //const craftable = getCraftableAmount(item.id, itemsState, items);
+              const craftable = getCraftable(item.id, inventoryState, items);
+              const group = item.group ? groupValues.get(item.group) : null;
+              const isGroupEnough = group
+                ? group.owned >= group.required
+                : true;
               if (showOnlyRequired && required <= 0) {
                 return null;
               }
@@ -150,9 +167,9 @@ const Inventory = () => {
                   item={item}
                   owned={inventoryState[item.id] ?? 0}
                   required={required}
-                  craftable={0}
+                  craftable={craftable}
+                  isGroupEnough={isGroupEnough}
                   onChange={(value) => handleOwnedChange(item.id, value)}
-                  onCraft={() => handleCraft(item.id)}
                 />
               );
             })}

@@ -5,16 +5,16 @@ import {
 } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
 import type { Item } from "@/types";
-import { Hammer, Minus, Plus } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { Minus, Plus } from "lucide-react";
+import { useCallback, useState } from "react";
 
 interface InventoryItemProps {
   item: Item;
   owned: number;
   required: number;
   craftable: number;
+  isGroupEnough: boolean;
   onChange: (value: number) => void;
-  onCraft: () => void;
 }
 
 const rarityColors: Record<number, string> = {
@@ -25,12 +25,14 @@ const rarityColors: Record<number, string> = {
 };
 
 const getMaterialIcon = (id: string) => {
+  const normId = id.toLocaleLowerCase().replace(/_/g, "-");
+
   return `${
     axiosInstance.defaults.baseURL
-  }/materials/${id.toLowerCase()}/${id.toLowerCase()}.png`;
+  }/materials/${normId}/images/${normId}`;
 };
 
-const placeholderPath = `${axiosInstance.defaults.baseURL}/materials/placeholder/icon.png`;
+const placeholderPath = `${axiosInstance.defaults.baseURL}/materials/placeholder/images/icon`;
 
 const getRarityColor = (rarity: number) => {
   return rarityColors[rarity] ?? "from-transparent";
@@ -41,14 +43,16 @@ const InventoryItem = ({
   owned,
   required,
   craftable,
+  isGroupEnough,
   onChange,
-  onCraft,
 }: InventoryItemProps) => {
   const [imgSrc, setImgSrc] = useState(
     getMaterialIcon(item.id.replace(/-/g, "_")),
   );
 
-  const isEnough = owned >= required;
+  const isConvertible = item.group && item.group !== "none";
+
+  const isEnough = isConvertible ? isGroupEnough : owned >= required;
 
   const handleError = useCallback(() => {
     setImgSrc(placeholderPath);
@@ -64,14 +68,6 @@ const InventoryItem = ({
       } min-w-[4rem]`}
     >
       <div className="flex justify-center relative w-full h-16 aspect-square bg-iron-900">
-        {craftable > 0 && !isEnough && (
-          <button
-            className="absolute top-1 left-1 p-1 bg-zinc-700/70 hover:bg-zinc-600/80 text-white rounded-full shadow-md flex items-center justify-center text-xs z-10"
-            onClick={onCraft}
-          >
-            <Hammer size={14} />
-          </button>
-        )}
         <Tooltip>
           <TooltipTrigger>
             <img
@@ -87,7 +83,7 @@ const InventoryItem = ({
                 )}`}
               />
             )}
-            {craftable > 0 && !isEnough && (
+            {craftable > 0 && isConvertible && (
               <div className="absolute top-1 right-1 px-1.5 py-0.5 bg-amber-500 text-white text-xs font-bold rounded-lg z-10">
                 {craftable}
               </div>

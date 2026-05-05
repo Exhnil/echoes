@@ -1,31 +1,13 @@
-import type {
-  Character,
-  CharacterState,
-  ItemState,
-  Material,
-  Weapon,
-  WeaponState,
-} from "@/types";
-
-const addMats = (
-  materials: Material[],
-  totalMats: Record<string, Material>
-) => {
-  for (const { name, id, value } of materials) {
-    totalMats[id] ??= { name, id, value: 0 };
-    totalMats[id].value += value;
-  }
-};
-
+/*
 export const completeCharacterLevel = (
   state: CharacterState,
   inventory: ItemState[],
-  character: Character
+  character: Character,
 ) => {
   const totalMats: Record<string, Material> = {};
 
   for (const [levelString, materials] of Object.entries(
-    character.ascension_materials
+    character.ascension_materials,
   )) {
     const level = Number(levelString);
     if (
@@ -46,17 +28,17 @@ export const completeCharacterLevel = (
 export const completeCharacterSkills = (
   state: CharacterState,
   inventory: ItemState[],
-  character: Character
+  character: Character,
 ) => {
   const totalMats: Record<string, Material> = {};
 
   for (const [levelString, materials] of Object.entries(
-    character.skill_materials
+    character.skill_materials,
   )) {
     const level = Number(levelString);
     const skillStepNumber = Object.values(state.skills).filter(
       (skill) =>
-        level > skill.currentSkillLevel && level <= skill.targetSkillLevel
+        level > skill.currentSkillLevel && level <= skill.targetSkillLevel,
     ).length;
 
     if (skillStepNumber > 0) {
@@ -66,7 +48,7 @@ export const completeCharacterSkills = (
           id: material.id,
           value: material.value * skillStepNumber,
         })),
-        totalMats
+        totalMats,
       );
     }
   }
@@ -84,7 +66,7 @@ export const completeCharacterSkills = (
 export const completeCharacterTalents = (
   state: CharacterState,
   inventory: ItemState[],
-  character: Character
+  character: Character,
 ) => {
   const totalMats: Record<string, Material> = {};
 
@@ -120,12 +102,12 @@ export const completeCharacterTalents = (
 export const completeWeaponLevel = (
   state: WeaponState,
   inventory: ItemState[],
-  weapon: Weapon
+  weapon: Weapon,
 ) => {
   const totalMats: Record<string, Material> = {};
 
   for (const [levelString, materials] of Object.entries(
-    weapon.ascension_materials
+    weapon.ascension_materials,
   )) {
     const level = Number(levelString);
     if (
@@ -145,7 +127,7 @@ export const completeWeaponLevel = (
 
 const consumeMats = (
   inventory: ItemState[],
-  totalMats: Record<string, Material>
+  totalMats: Record<string, Material>,
 ) => {
   const newInventory = structuredClone(inventory);
   for (const [id, mat] of Object.entries(totalMats)) {
@@ -155,4 +137,4 @@ const consumeMats = (
       itemState.owned >= mat.value ? itemState.owned - mat.value : 0;
   }
   return newInventory;
-};
+};*/

@@ -1,11 +1,9 @@
-import { axiosInstance } from "@/lib/axios";
 import { useWeaponStore } from "@/store/WeaponStore";
 import type { Weapon } from "@/types";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import WeaponModal from "./WeaponModal";
 import WeaponCard from "./WeaponCard";
 import React from "react";
-import WeaponGridSkeleton from "@/pages/skeletons/WeaponGridSkeleton";
 import { useWeaponProgressStore } from "@/store/WeaponProgressStore";
 
 interface WeaponGridProps {
@@ -14,7 +12,7 @@ interface WeaponGridProps {
 }
 
 const WeaponGrid = ({ rarity, weaponType }: WeaponGridProps) => {
-  const { weapons, fetchWeapons, isLoading } = useWeaponStore();
+  const { weapons, fetchWeapons } = useWeaponStore();
   const { initWeaponsProgress } = useWeaponProgressStore();
 
   const [selectedWeapon, setSelectedWeapon] = useState<Weapon | null>(null);

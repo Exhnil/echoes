@@ -3,20 +3,20 @@ import { axiosInstance } from "@/lib/axios";
 const BASE_URL = axiosInstance.defaults.baseURL;
 
 export const attributeIcons: Record<string, string> = {
-  Fusion: BASE_URL + "/attributes/fusion/icon.png",
-  Glacio: BASE_URL + "/attributes/glacio/icon.png",
-  Aero: BASE_URL + "/attributes/aero/icon.png",
-  Electro: BASE_URL + "/attributes/electro/icon.png",
-  Spectro: BASE_URL + "/attributes/spectro/icon.png",
-  Havoc: BASE_URL + "/attributes/havoc/icon.png",
+  Fusion: BASE_URL + "/assets/attributes/fusion/icon",
+  Glacio: BASE_URL + "/assets/attributes/glacio/icon",
+  Aero: BASE_URL + "/assets/attributes/aero/icon",
+  Electro: BASE_URL + "/assets/attributes/electro/icon",
+  Spectro: BASE_URL + "/assets/attributes/spectro/icon",
+  Havoc: BASE_URL + "/assets/attributes/havoc/icon",
 };
 
 export const weaponIcons: Record<string, string> = {
-  Broadblades: BASE_URL + "/weapon-type/broadblades/icon.png",
-  Swords: BASE_URL + "/weapon-type/swords/icon.png",
-  Gauntlets: BASE_URL + "/weapon-type/gauntlets/icon.png",
-  Pistols: BASE_URL + "/weapon-type/pistols/icon.png",
-  Rectifiers: BASE_URL + "/weapon-type/rectifiers/icon.png",
+  Broadblades: BASE_URL + "/assets/ui/weapon-type/broadblade",
+  Swords: BASE_URL + "/assets/ui/weapon-type/sword",
+  Gauntlets: BASE_URL + "/assets/ui/weapon-type/gauntlet",
+  Pistols: BASE_URL + "/assets/ui/weapon-type/pistol",
+  Rectifiers: BASE_URL + "/assets/ui/weapon-type/rectifier",
 };
 
 export const elementColor: Record<string, string> = {
@@ -29,9 +29,9 @@ export const elementColor: Record<string, string> = {
 };
 
 export const menuIcons: Record<string, string> = {
-  Characters: BASE_URL + "/ui/sidebar/character.png",
-  Weapons: BASE_URL + "/ui/sidebar/weapons.png",
-  Inventory: BASE_URL + "/ui/sidebar/inventory.png",
-  Planner: BASE_URL + "/ui/sidebar/planner.png",
-  Settings: BASE_URL + "/ui/sidebar/settings.png",
+  Characters: BASE_URL + "/assets/ui/sidebar/character",
+  Weapons: BASE_URL + "/assets/ui/sidebar/weapons",
+  Inventory: BASE_URL + "/assets/ui/sidebar/inventory",
+  Planner: BASE_URL + "/assets/ui/sidebar/planner",
+  Settings: BASE_URL + "/assets/ui/sidebar/settings",
 };

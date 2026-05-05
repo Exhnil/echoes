@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
 import type { Domain, Item } from "@/types";
-import { useMemo } from "react";
 
 interface DomainCardProps {
   domain: Domain;
@@ -16,7 +15,8 @@ interface DomainCardProps {
 }
 
 const getMaterialIcon = (id: string) => {
-  return `${axiosInstance.defaults.baseURL}/materials/${id.toLowerCase()}/${id.toLowerCase()}.png`;
+  const normId = id.toLocaleLowerCase().replace(/_/g, "-");
+  return `${axiosInstance.defaults.baseURL}/materials/${normId}/images/${normId}`;
 };
 
 const rarityColors: Record<number, string> = {
@@ -30,16 +30,7 @@ const getRarityColor = (rarity: number) => {
   return rarityColors[rarity] ?? "from-transparent";
 };
 
-const DomainCard = ({ domain, requiredMap, runs, items }: DomainCardProps) => {
-  const itemsById = useMemo(
-    () => Object.fromEntries(items.map((i) => [i.id, i])),
-    [items],
-  );
-
-  const getItemRarity = (id: string) => {
-    return itemsById[id]?.rarity ?? 1;
-  };
-
+const DomainCard = ({ domain, requiredMap, runs }: DomainCardProps) => {
   return (
     <Card
       key={domain.id}
@@ -78,7 +69,7 @@ const DomainCard = ({ domain, requiredMap, runs, items }: DomainCardProps) => {
                 {required}
               </span>
               <div
-                className={`absolute bottom-0 w-full h-1 ${getRarityColor(getItemRarity(mat.id))}`}
+                className={`absolute bottom-0 w-full h-1 ${getRarityColor(mat.rarity)}`}
               />
             </div>
           );

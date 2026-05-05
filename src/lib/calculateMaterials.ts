@@ -122,27 +122,24 @@ export const computeDomainRuns = (
 ): number => {
   if (domain.type === "Forgery Challenge" && domain.materials.length === 4) {
     console.log(domain.materials);
-    const ratios = [1, 3, 9, 27];
 
-    let totalRequiredFlat = 0;
-    let totalOwnedFlat = 0;
+    let totalRequired = 0;
+    let totalOwned = 0;
+    let totalDropPerRun = 0;
 
-    domain.materials.forEach((mat, i) => {
+    domain.materials.forEach((mat) => {
+      const weight = Math.pow(3, mat.rarity - 2);
       const owned = inventory[mat.id] ?? 0;
-      const required = requiredMap[mat.id ?? 0];
+      const required = requiredMap[mat.id] ?? 0;
 
-      totalRequiredFlat += required * ratios[i];
-      totalOwnedFlat += owned * ratios[i];
+      totalRequired += required * weight;
+      totalOwned += owned * weight;
+      totalDropPerRun += mat.value * weight;
     });
 
-    const totalNeededFlat = Math.max(totalRequiredFlat - totalOwnedFlat, 0);
+    const missing = Math.max(totalRequired - totalOwned, 0);
 
-    const totalDropPerRun = domain.materials.reduce(
-      (acc, mat, i) => acc + mat.value * ratios[i],
-      0,
-    );
-
-    return Math.ceil(totalNeededFlat / totalDropPerRun);
+    return Math.ceil(missing / totalDropPerRun);
   }
 
   let maxRuns = 0;
