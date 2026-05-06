@@ -62,7 +62,7 @@ const DomainCard = ({ domain, requiredMap, runs }: DomainCardProps) => {
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{mat.id}</p>
+                  <p>{mat.id.replace(/-/g, " ")}</p>
                 </TooltipContent>
               </Tooltip>
               <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">

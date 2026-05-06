@@ -149,7 +149,7 @@ const Planner = () => {
               className="bg-zinc-900/60 p-4 flex flex-col items-center gap-3 rounded-none border-neutral-800"
             >
               <CardTitle className="text-lg sm:text-xl font-bold text-center">
-                {key}
+                {key.replace(/-/g, " ")}
               </CardTitle>
               <div className="flex gap-2 mt-2">
                 {group.items.map((item) => (
