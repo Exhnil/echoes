@@ -1,6 +1,6 @@
 Work In Progress
 
-Hosted here : http://91.107.194.37/
+Hosted here : [www.wuwaplanner.com](https://www.wuwaplanner.com/)
 
 Saves are located in localstorage
 
