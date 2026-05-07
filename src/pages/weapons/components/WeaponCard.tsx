@@ -25,10 +25,7 @@ const WeaponCard = ({ weapon, setSelectedWeapon }: WeaponCardProps) => {
   };
 
   const getWeaponIcon = useCallback((id: string) => {
-    const normId = id
-      .toLocaleLowerCase()
-      .replace(/&/g, "and")
-      .replace(/[_\s]/g, "-");
+    const normId = id.toLowerCase().replace(/&/g, "and").replace(/[_\s]/g, "-");
     return `${axiosInstance.defaults.baseURL}/weapons/${normId}/images/icon`;
   }, []);
 

@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/tooltip";
 import { axiosInstance } from "@/lib/axios";
 import type { Domain, Item } from "@/types";
+import MaterialPopover from "./MaterialPopover";
 
 interface DomainCardProps {
   domain: Domain;
@@ -15,7 +16,7 @@ interface DomainCardProps {
 }
 
 const getMaterialIcon = (id: string) => {
-  const normId = id.toLocaleLowerCase().replace(/_/g, "-");
+  const normId = id.toLowerCase().replace(/_/g, "-");
   return `${axiosInstance.defaults.baseURL}/materials/${normId}/images/${normId}`;
 };
 
@@ -54,15 +55,17 @@ const DomainCard = ({ domain, requiredMap, runs }: DomainCardProps) => {
               className="relative bg-zinc-900/80 shadow-inner w-16 h-16"
             >
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <img
-                    src={getMaterialIcon(mat.id.replace(/[' -]/g, "_"))}
-                    alt={mat.id}
-                    className="w-16 h-16 object-cover"
-                  />
-                </TooltipTrigger>
+                <MaterialPopover material={mat} required={requiredMap[mat.id]}>
+                  <TooltipTrigger asChild>
+                    <img
+                      src={getMaterialIcon(mat.id.replace(/[' -]/g, "_"))}
+                      alt={mat.id}
+                      className="w-16 h-16 object-cover cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                </MaterialPopover>
                 <TooltipContent>
-                  <p>{mat.id.replace(/-/g, " ")}</p>
+                  <p>{mat.name}</p>
                 </TooltipContent>
               </Tooltip>
               <span className="absolute top-0 right-0 text-white text-xs px-1 font-semibold">

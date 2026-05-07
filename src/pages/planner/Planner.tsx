@@ -18,7 +18,7 @@ import { useWeaponStore } from "@/store/WeaponStore";
 import type { Item } from "@/types";
 
 const getMaterialIcon = (id: string) => {
-  const normId = id.toLocaleLowerCase().replace(/_/g, "-");
+  const normId = id.toLowerCase().replace(/_/g, "-");
   return `${axiosInstance.defaults.baseURL}/materials/${normId}/images/${normId}`;
 };
 
@@ -57,14 +57,19 @@ const Planner = () => {
     loadData();
   }, [fetchAllDomains, fetchAllMaterials, fetchCharacters, fetchWeapons]);
 
-  const filteredDomains = domains.filter((domain) =>
-    domain.materials.some((mat) => {
-      const required = requiredMap[mat.id] ?? 0;
-      const owned = inventoryState[mat.id] ?? 0;
+  const filteredDomains = domains
+    .filter((domain) =>
+      domain.materials.some((mat) => {
+        const required = requiredMap[mat.id] ?? 0;
+        const owned = inventoryState[mat.id] ?? 0;
 
-      return required > owned;
-    }),
-  );
+        return required > owned;
+      }),
+    )
+    .map((domain) => ({
+      ...domain,
+      materials: [...domain.materials].sort((a, b) => b.rarity - a.rarity),
+    }));
 
   const forgeryMaterials = filteredDomains.filter(
     (d) => d.type === "Forgery Challenge",
@@ -79,7 +84,7 @@ const Planner = () => {
   const filterBySource = (sourceKey: string) => {
     return items.filter(
       (i) =>
-        i.source.toLocaleLowerCase().includes(sourceKey) &&
+        i.source.toLowerCase().includes(sourceKey) &&
         (requiredMap[i.id] ?? 0) > (inventoryState[i.id] ?? 0),
     );
   };
@@ -101,6 +106,10 @@ const Planner = () => {
       drops[key].items.push(item);
       drops[key].required += requiredMap[item.id] ?? 0;
     }
+
+    for (const group of Object.values(drops)) {
+      group.items.sort((a, b) => b.rarity - a.rarity);
+    }
     return drops;
   }, [filteredEnemyDrops, requiredMap]);
 
@@ -120,6 +129,14 @@ const Planner = () => {
     overlordClasses.length === 0 &&
     filteredLocalItems.length === 0;
 
+  const totalEnergy = useMemo(() => {
+    let totalEnergy = 0;
+    for (const domain of filteredDomains) {
+      totalEnergy += runsByDomain[domain.id] * domain.cost;
+    }
+    return totalEnergy;
+  }, [filteredDomains, runsByDomain]);
+
   return (
     <div className="p-6 space-y-6">
       <div className="items-center mb-4">
@@ -127,6 +144,14 @@ const Planner = () => {
       </div>
 
       <div className="my-4 h-1 w-full bg-iron-700" />
+
+      {!hasNothingToFarm && (
+        <div>
+          <p className="inline-block text-sm bg-gradient-to-r from-equator-500 to-transparent px-2 py-1 font-semibold text-white">
+            <span>{totalEnergy} total waveplates</span>
+          </p>
+        </div>
+      )}
 
       {hasNothingToFarm && (
         <div className="flex flex-col items-center justify-center py-20 text-center text-zinc-400">
@@ -149,7 +174,7 @@ const Planner = () => {
               className="bg-zinc-900/60 p-4 flex flex-col items-center gap-3 rounded-none border-neutral-800"
             >
               <CardTitle className="text-lg sm:text-xl font-bold text-center">
-                {key.replace(/-/g, " ")}
+                {group.items[group.items.length - 1].name}
               </CardTitle>
               <div className="flex gap-2 mt-2">
                 {group.items.map((item) => (

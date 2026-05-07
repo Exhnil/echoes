@@ -23,7 +23,7 @@ interface CharacterModalProps {
 }
 
 const getCharacterIcon = (id: string) => {
-  const normId = id.toLocaleLowerCase().replace(/[_\s]/g, "-");
+  const normId = id.toLowerCase().replace(/[_\s]/g, "-");
   return `${axiosInstance.defaults.baseURL}/characters/${normId}/images/icon`;
 };
 

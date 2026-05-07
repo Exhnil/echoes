@@ -25,7 +25,7 @@ const rarityColors: Record<number, string> = {
 };
 
 const getMaterialIcon = (id: string) => {
-  const normId = id.toLocaleLowerCase().replace(/_/g, "-");
+  const normId = id.toLowerCase().replace(/_/g, "-");
 
   return `${
     axiosInstance.defaults.baseURL
