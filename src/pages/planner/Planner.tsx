@@ -16,6 +16,7 @@ import { useCharactersStore } from "@/store/CharactersStore";
 import { useWeaponProgressStore } from "@/store/WeaponProgressStore";
 import { useWeaponStore } from "@/store/WeaponStore";
 import type { Item } from "@/types";
+import MaterialPopover from "./components/MaterialPopover";
 
 const getMaterialIcon = (id: string) => {
   const normId = id.toLowerCase().replace(/_/g, "-");
@@ -183,13 +184,19 @@ const Planner = () => {
                     className="relative w-16 h-16 shadow-inner bg-zinc-900/60"
                   >
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <img
-                          src={getMaterialIcon(item.id)}
-                          alt={item.name}
-                          className="w-16 h-16 object-cover"
-                        />
-                      </TooltipTrigger>
+                      <MaterialPopover
+                        id={item.id}
+                        rarity={item.rarity}
+                        required={requiredMap[item.id]}
+                      >
+                        <TooltipTrigger asChild>
+                          <img
+                            src={getMaterialIcon(item.id)}
+                            alt={item.name}
+                            className="w-16 h-16 object-cover"
+                          />
+                        </TooltipTrigger>
+                      </MaterialPopover>
                       <TooltipContent>
                         <p>{item.name}</p>
                       </TooltipContent>
@@ -263,13 +270,19 @@ const Planner = () => {
               <div className="flex gap-2 mt-2">
                 <div className="relative w-16 h-16 shadow-inner bg-zinc-900/60">
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <img
-                        src={getMaterialIcon(item.id.replace(/[' -]/g, "_"))}
-                        alt={item.name}
-                        className="w-16 h-16 object-cover"
-                      />
-                    </TooltipTrigger>
+                    <MaterialPopover
+                      id={item.id}
+                      rarity={item.rarity}
+                      required={requiredMap[item.id]}
+                    >
+                      <TooltipTrigger asChild>
+                        <img
+                          src={getMaterialIcon(item.id.replace(/[' -]/g, "_"))}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover"
+                        />
+                      </TooltipTrigger>
+                    </MaterialPopover>
                     <TooltipContent>
                       <p>{item.name}</p>
                     </TooltipContent>

@@ -5,11 +5,11 @@ import {
 } from "@/components/ui/popover";
 import { axiosInstance } from "@/lib/axios";
 import { useInventoryStore } from "@/store/InventoryStore";
-import type { Material } from "@/types";
 import { Minus, Plus } from "lucide-react";
 
 interface MaterialPopoverProps {
-  material: Material;
+  id: string;
+  rarity: number;
   required: number;
   children: React.ReactNode;
 }
@@ -34,16 +34,17 @@ const getRarityColor = (rarity: number) => {
 };
 
 const MaterialPopover = ({
-  material,
+  id,
+  rarity,
   required,
   children,
 }: MaterialPopoverProps) => {
   const { inventoryState, setOwned } = useInventoryStore();
-  const owned = inventoryState[material.id] ?? 0;
+  const owned = inventoryState[id] ?? 0;
   const isEnough = owned >= required;
 
-  const increment = () => setOwned(material.id, owned + 1);
-  const decrement = () => setOwned(material.id, Math.max(0, owned - 1));
+  const increment = () => setOwned(id, owned + 1);
+  const decrement = () => setOwned(id, Math.max(0, owned - 1));
 
   return (
     <Popover>
@@ -51,13 +52,13 @@ const MaterialPopover = ({
       <PopoverContent className="w-fit p-2 bg-zinc-800 items-center">
         <div className="flex justify-center relative h-16 w-full aspect-square bg-iron-900">
           <img
-            src={getMaterialIcon(material.id)}
-            alt={material.name}
+            src={getMaterialIcon(id)}
+            alt={id}
             className="object-contain rounded-md"
           />
-          {material.rarity > 1 && (
+          {rarity > 1 && (
             <div
-              className={`absolute bottom-0 left-0 w-full h-1 ${getRarityColor(material.rarity)}`}
+              className={`absolute bottom-0 left-0 w-full h-1 ${getRarityColor(rarity)}`}
             />
           )}
         </div>
@@ -65,7 +66,7 @@ const MaterialPopover = ({
           <span
             className={`flex-1 text-center overflow-hidden px-1 py-0.5 text-sm font-semibold ${required === 0 ? "bg-zinc-500" : isEnough ? "bg-green-400" : "bg-red-400"}`}
           >
-            {required}
+            {required ?? 0}
           </span>
           <div className="flex items-center bg-zinc-700">
             <button className="text-white" onClick={increment}>
@@ -74,7 +75,7 @@ const MaterialPopover = ({
             <input
               value={owned}
               onChange={(e) => {
-                setOwned(material.id, Number(e.target.value) || 0);
+                setOwned(id, Number(e.target.value) || 0);
               }}
               className="text-center rounded-none px-1 py-0.5 bg-zinc-700 w-12"
             />

@@ -55,7 +55,11 @@ const DomainCard = ({ domain, requiredMap, runs }: DomainCardProps) => {
               className="relative bg-zinc-900/80 shadow-inner w-16 h-16"
             >
               <Tooltip>
-                <MaterialPopover material={mat} required={requiredMap[mat.id]}>
+                <MaterialPopover
+                  id={mat.id}
+                  rarity={mat.rarity}
+                  required={requiredMap[mat.id]}
+                >
                   <TooltipTrigger asChild>
                     <img
                       src={getMaterialIcon(mat.id.replace(/[' -]/g, "_"))}
